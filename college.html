@@ -405,14 +405,26 @@ ptsR = new ethers.Contract(ADDR.pts, PTS_ABI, reader);
 
 function toast(msg, ms = 6000) { const t = $("toast"); t.innerHTML = msg; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", ms); }
 function short(a) { return a ? a.slice(0, 6) + "…" + a.slice(-4) : ""; }
-function errMsg(e) { return (e && (e.reason || e.shortMessage || (e.info && e.info.error && e.info.error.message) || e.message)) || "Something went wrong"; }
+function errMsg(e) { const m = e && (e.reason || (e.info && e.info.error && e.info.error.message) || (e.error && e.error.message) || e.shortMessage || e.message); return (m || "Something went wrong").replace("could not coalesce error", "the network returned an error, please try again"); }
 function fmtDate(ts) { return new Date(Number(ts) * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" }); }
 function same(a, b) { return a && b && a.toLowerCase() === b.toLowerCase(); }
 function icon(name) { const n = name.toLowerCase(); for (const k in PERK_ICON) if (n.includes(k)) return PERK_ICON[k]; return "🎓"; }
 
+// read past events in small block ranges, because public RPC servers refuse very large log queries
+const LOOKBACK = 150000; // about 3 weeks of Sepolia blocks
 async function qf(contract, filter) {
-  try { return await contract.queryFilter(filter, 0); }
-  catch (e) { const latest = await reader.getBlockNumber(); return await contract.queryFilter(filter, Math.max(0, latest - 45000)); }
+  const runner = (typeof provider !== "undefined" && provider) ? provider : (typeof reader !== "undefined" ? reader : contract.runner);
+  const c = contract.connect(runner);
+  const latest = await runner.getBlockNumber();
+  const start = Math.max(0, latest - LOOKBACK);
+  try { return await c.queryFilter(filter, start, latest); } catch (e) {}
+  let out = [], size = 20000, to = latest;
+  while (to >= start) {
+    const from = Math.max(start, to - size + 1);
+    try { out = (await c.queryFilter(filter, from, to)).concat(out); to = from - 1; }
+    catch (e) { if (size <= 1000) throw e; size = Math.floor(size / 2); }
+  }
+  return out;
 }
 
 // ---------- public data (no wallet needed) ----------

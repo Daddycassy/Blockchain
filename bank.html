@@ -237,19 +237,26 @@ const DEFAULTS = { cert: "0xe7cdebf3b3caffb7029c12300ae37c6fa0fdfe84", token: "0
 function loadCfg() { let c = {}; try { c = JSON.parse(localStorage.getItem("sboiCfg")) || {}; } catch (e) {} return Object.assign({}, DEFAULTS, c); }
 function saveCfg() { try { localStorage.setItem("sboiCfg", JSON.stringify(cfg)); } catch (e) {} }
 const $ = id => document.getElementById(id);
-// read past events; if the RPC rejects a long block range, retry over the most recent blocks
+// read past events in small block ranges, because public RPC servers refuse very large log queries
+const LOOKBACK = 150000; // about 3 weeks of Sepolia blocks
 async function qf(contract, filter) {
-  const from = cfg.block ? Number(cfg.block) : 0;
-  try { return await contract.queryFilter(filter, from); }
-  catch (e) {
-    const latest = await (provider || contract.runner.provider).getBlockNumber();
-    return await contract.queryFilter(filter, Math.max(0, latest - 45000));
+  const runner = (typeof provider !== "undefined" && provider) ? provider : (typeof reader !== "undefined" ? reader : contract.runner);
+  const c = contract.connect(runner);
+  const latest = await runner.getBlockNumber();
+  const start = Math.max(0, latest - LOOKBACK);
+  try { return await c.queryFilter(filter, start, latest); } catch (e) {}
+  let out = [], size = 20000, to = latest;
+  while (to >= start) {
+    const from = Math.max(start, to - size + 1);
+    try { out = (await c.queryFilter(filter, from, to)).concat(out); to = from - 1; }
+    catch (e) { if (size <= 1000) throw e; size = Math.floor(size / 2); }
   }
+  return out;
 }
 
 function toast(msg, ms = 5000) { const t = $("toast"); t.innerHTML = msg; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", ms); }
 function short(a) { return a ? a.slice(0, 6) + "…" + a.slice(-4) : ""; }
-function errMsg(e) { return (e && (e.reason || e.shortMessage || (e.info && e.info.error && e.info.error.message) || e.message)) || "Something went wrong"; }
+function errMsg(e) { const m = e && (e.reason || (e.info && e.info.error && e.info.error.message) || (e.error && e.error.message) || e.shortMessage || e.message); return (m || "Something went wrong").replace("could not coalesce error", "the network returned an error, please try again"); }
 function fmtDate(ts) { return new Date(Number(ts) * 1000).toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
 
 // tabs
