@@ -63,6 +63,7 @@
   <div class="spacer"></div>
   <span class="pill" id="netPill">Not connected</span>
   <button id="connectBtn">Connect MetaMask</button>
+  <button class="secondary" id="switchBtn">Switch account</button>
 </header>
 
 <nav id="tabs">
@@ -185,6 +186,7 @@
         <li><b>This website</b> is the front end. It talks to the two contracts through MetaMask using the ethers.js library. Reads are free; writes are transactions you confirm.</li>
         <li><b>Safeguards:</b> transfers of the certificate are blocked, early maturity is rejected, duplicate deposit references are rejected, and the bank can pause both contracts.</li>
       </ol>
+      <h2 style="margin-top:18px">Deployed on Sepolia</h2><ul class="steps"><li><b>SBOIFDCertificate (ERC-721):</b> <a target="_blank" href="https://sepolia.etherscan.io/address/0xE7cdebF3b3caFFB7029c12300ae37C6fA0FdFE84">0xE7cdebF3b3caFFB7029c12300ae37C6fA0FdFE84</a></li><li><b>SBOIRewardToken (ERC-20):</b> <a target="_blank" href="https://sepolia.etherscan.io/address/0x477f999895812dCAcB7aaa2b1213c8221eD61e4e">0x477f999895812dCAcB7aaa2b1213c8221eD61e4e</a></li></ul>
     </div>
   </section>
 
@@ -231,9 +233,20 @@ const TOKEN_ABI = [
 
 let provider, signer, me, cert, token, cfg = loadCfg();
 
-function loadCfg() { try { return JSON.parse(localStorage.getItem("sboiCfg")) || {}; } catch (e) { return {}; } }
+const DEFAULTS = { cert: "0xe7cdebf3b3caffb7029c12300ae37c6fa0fdfe84", token: "0x477f999895812dcacb7aaa2b1213c8221ed61e4e" };
+function loadCfg() { let c = {}; try { c = JSON.parse(localStorage.getItem("sboiCfg")) || {}; } catch (e) {} return Object.assign({}, DEFAULTS, c); }
 function saveCfg() { try { localStorage.setItem("sboiCfg", JSON.stringify(cfg)); } catch (e) {} }
 const $ = id => document.getElementById(id);
+// read past events; if the RPC rejects a long block range, retry over the most recent blocks
+async function qf(contract, filter) {
+  const from = cfg.block ? Number(cfg.block) : 0;
+  try { return await contract.queryFilter(filter, from); }
+  catch (e) {
+    const latest = await (provider || contract.runner.provider).getBlockNumber();
+    return await contract.queryFilter(filter, Math.max(0, latest - 45000));
+  }
+}
+
 function toast(msg, ms = 5000) { const t = $("toast"); t.innerHTML = msg; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", ms); }
 function short(a) { return a ? a.slice(0, 6) + "…" + a.slice(-4) : ""; }
 function errMsg(e) { return (e && (e.reason || e.shortMessage || (e.info && e.info.error && e.info.error.message) || e.message)) || "Something went wrong"; }
@@ -270,6 +283,14 @@ async function connect() {
   } catch (e) { toast(errMsg(e)); }
 }
 $("connectBtn").onclick = connect;
+// open MetaMask's account picker so a different account can be connected to this page
+$("switchBtn").onclick = async () => {
+  if (!window.ethereum) return toast("MetaMask was not found in this browser.");
+  try {
+    await window.ethereum.request({ method: "wallet_requestPermissions", params: [{ eth_accounts: {} }] });
+    await connect();
+  } catch (e) { toast(errMsg(e)); }
+};
 if (window.ethereum) { window.ethereum.on && window.ethereum.on("accountsChanged", () => connect()); window.ethereum.on && window.ethereum.on("chainChanged", () => location.reload()); }
 
 function initContracts() {
@@ -296,8 +317,7 @@ $("refreshBtn").onclick = refresh;
 async function loadCerts() {
   const box = $("certs");
   try {
-    const from = cfg.block ? Number(cfg.block) : 0;
-    const issued = await cert.queryFilter(cert.filters.CertificateIssued(null, me), from);
+    const issued = await qf(cert, cert.filters.CertificateIssued(null, me));
     if (!issued.length) { box.innerHTML = '<p class="note">No certificates found for this wallet.</p>'; return; }
     box.innerHTML = "";
     for (const ev of issued.reverse()) {
@@ -339,10 +359,9 @@ async function loadPerks() {
 async function loadLog() {
   const box = $("log");
   try {
-    const from = cfg.block ? Number(cfg.block) : 0;
     const [a, b, c, d] = await Promise.all([
-      cert.queryFilter(cert.filters.CertificateIssued(), from), cert.queryFilter(cert.filters.CertificateMatured(), from),
-      token.queryFilter(token.filters.RewardMinted(), from), token.queryFilter(token.filters.PerkRedeemed(), from)]);
+      qf(cert, cert.filters.CertificateIssued()), qf(cert, cert.filters.CertificateMatured()),
+      qf(token, token.filters.RewardMinted()), qf(token, token.filters.PerkRedeemed())]);
     const rows = [
       ...a.map(e => [e.blockNumber, `Certificate #${e.args.tokenId} issued to ${short(e.args.holder)} (${e.args.termMonths} months)`, e.transactionHash]),
       ...b.map(e => [e.blockNumber, `Certificate #${e.args.tokenId} matured and burned`, e.transactionHash]),

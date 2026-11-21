@@ -3,218 +3,378 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Whitford Global College | Credentials and Merit Points</title>
+<title>Whitford Global College, Dublin</title>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
 <style>
-  :root { --navy:#5a1a33; --teal:#b8872b; --teal-soft:#f8efdc; --ink:#22202a; --muted:#625b6b; --line:#e7e1e5; --bg:#faf7f5; --red:#b03a2e; }
+  :root {
+    --maroon:#5c1430; --maroon-2:#7d2347; --gold:#c9a03d; --gold-2:#e7c873; --cream:#fbf7f0; --ink:#231c22;
+    --muted:#6b5f68; --line:#eadfd6; --green:#1f7a4c; --red:#b1352a; --serif: Georgia, "Times New Roman", serif;
+  }
   * { box-sizing:border-box; }
-  body { margin:0; font-family: "Segoe UI", Arial, sans-serif; color:var(--ink); background:var(--bg); }
-  header { background:linear-gradient(120deg,#4a1228,#7b2a4a); color:#fff; padding:18px 28px; display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
-  .brand { display:flex; align-items:center; gap:12px; }
-  .brand svg { width:44px; height:44px; }
-  .brand h1 { font-size:20px; margin:0; letter-spacing:.3px; }
-  .brand p { margin:2px 0 0; font-size:12px; opacity:.8; }
-  .spacer { flex:1; }
-  .pill { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); padding:6px 12px; border-radius:999px; font-size:12px; }
-  button { font:inherit; cursor:pointer; border:0; border-radius:8px; padding:9px 16px; background:var(--teal); color:#fff; font-weight:600; }
-  button.secondary { background:#fff; color:var(--navy); border:1px solid var(--line); }
-  button.danger { background:var(--red); }
-  nav { display:flex; gap:4px; padding:0 28px; background:#fff; border-bottom:1px solid var(--line); flex-wrap:wrap; }
-  nav button { background:none; color:var(--muted); border-radius:0; border-bottom:3px solid transparent; padding:14px 16px; }
-  nav button.active { color:var(--navy); border-bottom-color:var(--teal); }
-  main { max-width:1100px; margin:24px auto; padding:0 20px; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px; }
-  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px; box-shadow:0 1px 2px rgba(40,20,30,.04); }
-  .card h2 { font-size:16px; margin:0 0 4px; color:var(--navy); }
-  .card .sub { font-size:13px; color:var(--muted); margin:0 0 14px; }
-  .big { font-size:34px; font-weight:700; color:var(--navy); }
-  label { display:block; font-size:12px; color:var(--muted); margin:10px 0 4px; font-weight:600; }
-  input, select { width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:8px; font:inherit; background:#fff; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:"Segoe UI", Arial, sans-serif; color:var(--ink); background:var(--cream); }
+  a { color:var(--maroon-2); }
+  .container { max-width:1180px; margin:0 auto; padding:0 24px; }
+
+  /* top utility bar */
+  .utility { background:var(--maroon); color:#f3e6d0; font-size:13px; }
+  .utility .container { display:flex; align-items:center; gap:16px; height:42px; }
+  .utility .grow { flex:1; }
+  .wallet-pill { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); padding:4px 12px; border-radius:999px; }
+  .role { font-weight:700; color:var(--gold-2); }
+
+  /* header */
+  header.main { background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:20; }
+  header.main .container { display:flex; align-items:center; gap:28px; height:78px; }
+  .crest { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--maroon); }
+  .crest svg { width:46px; height:52px; }
+  .crest b { font-family:var(--serif); font-size:22px; display:block; line-height:1.05; }
+  .crest small { font-size:11px; letter-spacing:2.5px; color:var(--muted); text-transform:uppercase; }
+  nav.links { display:flex; gap:22px; margin-left:auto; }
+  nav.links a { text-decoration:none; color:var(--ink); font-weight:600; font-size:14px; padding:6px 0; border-bottom:2px solid transparent; }
+  nav.links a:hover { border-color:var(--gold); }
+  button, .btn { font:inherit; cursor:pointer; border:0; border-radius:6px; padding:10px 18px; font-weight:700; text-decoration:none; display:inline-block; }
+  .btn-gold { background:var(--gold); color:#2a1a10; } .btn-gold:hover { background:var(--gold-2); }
+  .btn-maroon { background:var(--maroon); color:#fff; } .btn-maroon:hover { background:var(--maroon-2); }
+  .btn-ghost { background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,.7); }
+  .btn-line { background:#fff; color:var(--maroon); border:1.5px solid var(--line); }
+  .btn-small { padding:6px 12px; font-size:12px; }
+  .btn-red { background:var(--red); color:#fff; }
+
+  /* hero */
+  .hero { position:relative; color:#fff; background:linear-gradient(115deg, rgba(60,10,30,.96) 0%, rgba(92,20,48,.88) 45%, rgba(92,20,48,.35) 100%), radial-gradient(circle at 80% 30%, #f2d793 0, #c9a03d 18%, #7d2347 60%); overflow:hidden; }
+  .hero .container { display:grid; grid-template-columns:1.1fr .9fr; gap:30px; align-items:center; min-height:470px; padding-top:40px; padding-bottom:40px; }
+  .eyebrow { font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--gold-2); font-weight:700; }
+  .hero h1 { font-family:var(--serif); font-size:54px; line-height:1.05; margin:14px 0 16px; font-weight:400; }
+  .hero h1 em { color:var(--gold-2); font-style:italic; }
+  .hero p { font-size:17px; line-height:1.6; max-width:540px; opacity:.92; }
+  .hero .cta { display:flex; gap:12px; margin-top:24px; flex-wrap:wrap; }
+  .hero svg.campus { width:100%; max-width:520px; justify-self:end;  }
+
+  /* stats */
+  .stats { background:#fff; border-bottom:1px solid var(--line); }
+  .stats .container { display:grid; grid-template-columns:repeat(4,1fr); }
+  .stat { padding:26px 10px; text-align:center; border-right:1px solid var(--line); }
+  .stat:last-child { border-right:0; }
+  .stat b { font-family:var(--serif); font-size:34px; color:var(--maroon); display:block; }
+  .stat span { font-size:13px; color:var(--muted); }
+
+  section.block { padding:70px 0; }
+  .section-head { text-align:center; max-width:720px; margin:0 auto 38px; }
+  .section-head h2 { font-family:var(--serif); font-weight:400; font-size:38px; color:var(--maroon); margin:10px 0; }
+  .section-head p { color:var(--muted); line-height:1.6; }
+  .divider { width:60px; height:3px; background:var(--gold); margin:0 auto; }
+
+  /* programmes */
+  .prog-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+  .prog { background:#fff; border:1px solid var(--line); border-radius:10px; overflow:hidden; transition:transform .15s, box-shadow .15s; }
+  .prog:hover { transform:translateY(-4px); box-shadow:0 12px 30px rgba(60,20,40,.12); }
+  .prog .band { height:96px; display:flex; align-items:flex-end; padding:14px; color:#fff; font-size:12px; letter-spacing:1.5px; font-weight:700; }
+  .prog .body { padding:16px; }
+  .prog h3 { font-family:var(--serif); font-weight:400; font-size:20px; margin:0 0 6px; color:var(--maroon); }
+  .prog p { font-size:13px; color:var(--muted); line-height:1.5; margin:0 0 10px; }
+  .chip { display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; background:#f5ecdb; color:#7a5a12; margin-right:4px; }
+
+  /* merit points explainer */
+  .merit { background:linear-gradient(180deg,#fff 0,#fff 60%,var(--cream) 100%); }
+  .three { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .step-card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:24px; position:relative; }
+  .step-card .n { position:absolute; top:-16px; left:24px; width:34px; height:34px; border-radius:50%; background:var(--maroon); color:var(--gold-2); display:grid; place-items:center; font-family:var(--serif); font-size:18px; }
+  .step-card h3 { font-family:var(--serif); font-weight:400; color:var(--maroon); margin:8px 0 8px; font-size:21px; }
+  .step-card ul { padding-left:18px; margin:0; font-size:14px; line-height:1.8; color:var(--ink); }
+  .step-card ul li span { color:var(--gold); font-weight:700; }
+
+  /* hub */
+  .hub { background:var(--maroon); color:#fff; }
+  .hub .section-head h2 { color:#fff; } .hub .section-head p { color:#ead9c6; }
+  .hub-grid { display:grid; grid-template-columns:340px 1fr; gap:22px; }
+  .panel { background:#fff; color:var(--ink); border-radius:12px; padding:22px; }
+  .panel h3 { font-family:var(--serif); font-weight:400; color:var(--maroon); margin:0 0 4px; font-size:22px; }
+  .panel .sub { font-size:13px; color:var(--muted); margin:0 0 14px; }
+  .idcard { background:linear-gradient(145deg,#4a0f26,#7d2347); color:#fff; border-radius:12px; padding:20px; position:relative; overflow:hidden; }
+  .idcard:after { content:""; position:absolute; right:-40px; top:-40px; width:150px; height:150px; border-radius:50%; border:22px solid rgba(231,200,115,.18); }
+  .idcard .lbl { font-size:11px; letter-spacing:2px; opacity:.7; }
+  .idcard .addr { font-family:monospace; font-size:13px; word-break:break-all; margin:4px 0 14px; }
+  .points { font-family:var(--serif); font-size:52px; color:var(--gold-2); line-height:1; }
+  .tierbar { height:8px; background:rgba(255,255,255,.2); border-radius:8px; margin:12px 0 6px; overflow:hidden; }
+  .tierbar i { display:block; height:100%; background:var(--gold-2); width:0; transition:width .6s; }
+  .badge { display:inline-block; font-size:11px; font-weight:800; letter-spacing:1px; padding:4px 10px; border-radius:999px; }
+  .b-ok { background:#e2f3e9; color:var(--green); } .b-no { background:#fae5e2; color:var(--red); } .b-wait { background:#fff1d6; color:#8a6100; }
+  .b-gold { background:var(--gold-2); color:#3a2510; }
+  .perk { display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid var(--line); }
+  .perk:last-child { border-bottom:0; }
+  .perk .ic { width:40px; height:40px; border-radius:10px; background:#f5ecdb; display:grid; place-items:center; font-size:20px; flex:none; }
+  .perk .grow { flex:1; }
+  .perk b { display:block; }
+  .perk small { color:var(--muted); }
+  .creds { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:16px; }
+
+  /* certificate (parchment) */
+  .parch { background:#fffaf0; border:1px solid #e6d3a8; border-radius:6px; padding:20px 22px; position:relative; color:#2c2118; box-shadow:inset 0 0 0 6px #fffaf0, inset 0 0 0 7px #d9bd78; }
+  .parch .ttl { text-align:center; font-family:var(--serif); color:var(--maroon); font-size:17px; letter-spacing:1px; }
+  .parch .small { text-align:center; font-size:10px; letter-spacing:2.5px; color:#8c7a5a; text-transform:uppercase; }
+  .parch .num { text-align:center; font-family:var(--serif); font-size:30px; margin:6px 0; color:#3b2a14; }
+  .parch dl { display:grid; grid-template-columns:auto 1fr; gap:3px 10px; font-size:12.5px; margin:8px 0 0; }
+  .parch dt { color:#8c7a5a; } .parch dd { margin:0; text-align:right; font-weight:700; }
+  .seal { position:absolute; right:14px; bottom:14px; width:54px; height:54px; border-radius:50%; background:radial-gradient(circle,#d8b45a 0,#b88a2a 70%); color:#4a2c00; display:grid; place-items:center; font-size:9px; font-weight:800; text-align:center; line-height:1.1; box-shadow:0 2px 0 #8d6514; }
+  .revoked { filter:grayscale(1); opacity:.75; }
+  .revoked:before { content:"REVOKED"; position:absolute; inset:0; display:grid; place-items:center; font-size:34px; font-weight:900; color:rgba(177,53,42,.55); transform:rotate(-18deg); }
+
+  /* verify */
+  .verify-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  label { display:block; font-size:12px; color:var(--muted); margin:12px 0 5px; font-weight:700; letter-spacing:.3px; }
+  input, select { width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:6px; font:inherit; background:#fff; }
   .row { display:flex; gap:10px; } .row > * { flex:1; }
   .actions { margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; }
-  .tag { display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; }
-  .ok { background:#e3f4ea; color:#1d7a46; } .no { background:#fbe6e3; color:var(--red); } .wait { background:#fff4dc; color:#9a6a00; }
-  .cert { border-radius:14px; padding:18px; color:#fff; background:linear-gradient(160deg,#4a1228,#7b2a4a 60%,#b8872b); position:relative; overflow:hidden; min-height:170px; }
-  .cert .num { font-size:30px; font-weight:800; margin:6px 0; }
-  .cert dl { display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:13px; margin:8px 0 0; }
-  .cert dt { opacity:.75; } .cert dd { margin:0; text-align:right; font-weight:600; }
-  .certs { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
-  .perk { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--line); gap:10px; }
-  .perk:last-child { border-bottom:0; }
-  .log { font-size:13px; } .log div { padding:8px 0; border-bottom:1px solid var(--line); }
-  a { color:#8a5a12; }
+  .result { margin-top:16px; }
+
+  /* registrar */
+  .reg { background:#f3ede4; }
+  .lock { background:#fff; border:1px dashed #c9b49a; border-radius:12px; padding:22px; text-align:center; color:var(--muted); }
+  .reg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .mono { font-family:monospace; font-size:12px; word-break:break-all; background:#f6efe5; padding:8px; border-radius:6px; }
+  .log div { padding:9px 0; border-bottom:1px solid var(--line); font-size:13px; }
+
+  footer { background:#2a0d1a; color:#d8c6b5; padding:40px 0 26px; font-size:13px; }
+  footer .cols { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:20px; }
+  footer h4 { color:var(--gold-2); font-family:var(--serif); font-weight:400; font-size:17px; margin:0 0 10px; }
+  footer a { color:#d8c6b5; text-decoration:none; display:block; margin:4px 0; }
+  footer .legal { border-top:1px solid rgba(255,255,255,.12); margin-top:26px; padding-top:16px; font-size:12px; opacity:.75; }
+
+  #toast { position:fixed; right:20px; bottom:20px; max-width:400px; background:#2a0d1a; color:#fff; padding:13px 16px; border-radius:8px; font-size:13px; box-shadow:0 8px 30px rgba(0,0,0,.3); display:none; z-index:50; border-left:4px solid var(--gold); }
   .hidden { display:none !important; }
   .note { font-size:12px; color:var(--muted); }
-  .steps li { margin:6px 0; }
-  .mono { font-family:monospace; font-size:12px; word-break:break-all; background:#f4eff2; padding:8px; border-radius:6px; }
-  #toast { position:fixed; right:20px; bottom:20px; max-width:380px; background:var(--navy); color:#fff; padding:12px 16px; border-radius:10px; font-size:13px; box-shadow:0 6px 24px rgba(0,0,0,.2); display:none; }
-  .flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:13px; }
-  .flow span { background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
-  .flow b { color:var(--teal); }
+
+  @media (max-width: 960px) {
+    .hero .container, .hub-grid, .verify-grid { grid-template-columns:1fr; }
+    .prog-grid, .reg-grid, .three, .stats .container, footer .cols { grid-template-columns:1fr 1fr; }
+    nav.links { display:none; } .hero h1 { font-size:40px; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">
-    <svg viewBox="0 0 44 44"><path d="M22 4 40 12v4H4v-4z" fill="#e8c46a"/><rect x="7" y="17" width="4" height="15" fill="#e8c46a"/><rect x="15" y="17" width="4" height="15" fill="#e8c46a"/><rect x="25" y="17" width="4" height="15" fill="#e8c46a"/><rect x="33" y="17" width="4" height="15" fill="#e8c46a"/><rect x="4" y="34" width="36" height="4" fill="#e8c46a"/></svg>
-    <div><h1>Whitford Global College</h1><p>Verified credentials (ERC-721) and Whitford Merit Points (ERC-20)</p></div>
+
+<div class="utility">
+  <div class="container">
+    <span>Dublin, Ireland · QQI-validated programmes · Est. 1998</span>
+    <span class="grow"></span>
+    <span class="wallet-pill" id="netPill">Wallet not connected</span>
+    <span class="role" id="roleLbl"></span>
+    <button class="btn-gold btn-small" id="connectBtn">Connect wallet</button>
+    <button class="btn-ghost btn-small" id="switchBtn">Switch account</button>
   </div>
-  <div class="spacer"></div>
-  <span class="pill" id="netPill">Not connected</span>
-  <button id="connectBtn">Connect MetaMask</button>
+</div>
+
+<header class="main">
+  <div class="container">
+    <a class="crest" href="#top">
+      <svg viewBox="0 0 46 52"><path d="M23 2 44 9v16c0 13-9 21-21 25C11 46 2 38 2 25V9z" fill="#5c1430" stroke="#c9a03d" stroke-width="2"/><path d="M23 12l11 5H12z" fill="#e7c873"/><rect x="14" y="18" width="3" height="13" fill="#e7c873"/><rect x="21.5" y="18" width="3" height="13" fill="#e7c873"/><rect x="29" y="18" width="3" height="13" fill="#e7c873"/><rect x="12" y="32" width="22" height="3" fill="#e7c873"/><path d="M15 40h16" stroke="#e7c873" stroke-width="1.5"/></svg>
+      <span><b>Whitford Global</b><small>College · Dublin</small></span>
+    </a>
+    <nav class="links">
+      <a href="#programmes">Programmes</a>
+      <a href="#merit">Merit Points</a>
+      <a href="#hub">Student Hub</a>
+      <a href="#verify">Verify a Degree</a>
+      <a href="#registrar">Registrar</a>
+    </nav>
+  </div>
 </header>
 
-<nav id="tabs">
-  <button data-tab="account" class="active">My account</button>
-  <button data-tab="console">Registrar console</button>
-  <button data-tab="verify">Employer check</button>
-  <button data-tab="how">How it works</button>
-  <button data-tab="setup">Setup</button>
-</nav>
+<a id="top"></a>
+<section class="hero">
+  <div class="container">
+    <div>
+      <div class="eyebrow">Business · Computing · FinTech</div>
+      <h1>Learn with purpose.<br>Graduate with <em>proof</em>.</h1>
+      <p>At Whitford Global College, every qualification is issued as a tamper-proof digital credential that employers anywhere can verify in seconds, and every week of effort earns Whitford Merit Points you can spend on campus.</p>
+      <div class="cta">
+        <a class="btn btn-gold" href="#hub">Open Student Hub</a>
+        <a class="btn btn-ghost" href="#verify">Verify a degree</a>
+      </div>
+    </div>
+    <svg class="campus" viewBox="0 0 520 360" aria-label="Illustration of the Whitford campus">
+      <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6dfa0" stop-opacity=".0"/><stop offset="1" stop-color="#f6dfa0" stop-opacity=".25"/></linearGradient></defs>
+      <circle cx="420" cy="70" r="34" fill="#f2d793" opacity=".9"/>
+      <!-- clock tower -->
+      <rect x="236" y="40" width="48" height="140" fill="#f6ead3"/><path d="M230 44h60l-30-34z" fill="#7d2347"/>
+      <circle cx="260" cy="80" r="15" fill="#fff" stroke="#c9a03d" stroke-width="3"/><path d="M260 70v10l7 5" stroke="#5c1430" stroke-width="2.5" fill="none"/>
+      <rect x="248" y="110" width="8" height="22" fill="#5c1430" opacity=".5"/><rect x="264" y="110" width="8" height="22" fill="#5c1430" opacity=".5"/>
+      <!-- main hall -->
+      <rect x="70" y="170" width="380" height="140" fill="#fbf1de"/>
+      <path d="M60 172h400l-200-62z" fill="#7d2347"/><path d="M90 168h340" stroke="#c9a03d" stroke-width="4"/>
+      <g fill="#e9d9b8">
+        <rect x="100" y="185" width="16" height="115"/><rect x="150" y="185" width="16" height="115"/><rect x="200" y="185" width="16" height="115"/>
+        <rect x="304" y="185" width="16" height="115"/><rect x="354" y="185" width="16" height="115"/><rect x="404" y="185" width="16" height="115"/>
+      </g>
+      <path d="M236 300v-62a24 24 0 0 1 48 0v62z" fill="#5c1430"/>
+      <g fill="#7d2347" opacity=".55"><rect x="122" y="200" width="22" height="34" rx="11"/><rect x="172" y="200" width="22" height="34" rx="11"/><rect x="326" y="200" width="22" height="34" rx="11"/><rect x="376" y="200" width="22" height="34" rx="11"/></g>
+      <rect x="40" y="308" width="440" height="10" fill="#e9d9b8"/><rect x="20" y="318" width="480" height="10" fill="#dcc79d"/>
+      <!-- trees -->
+      <circle cx="40" cy="270" r="30" fill="#2f5d3a"/><rect x="37" y="290" width="6" height="28" fill="#3b2a14"/>
+      <circle cx="486" cy="262" r="34" fill="#2f5d3a"/><rect x="483" y="284" width="6" height="34" fill="#3b2a14"/>
+      <!-- banner with credential seal -->
+      <circle cx="260" cy="150" r="13" fill="#c9a03d"/><path d="M254 150l4 4 8-9" stroke="#fff" stroke-width="3" fill="none"/>
+    </svg>
+  </div>
+</section>
 
-<main>
-  <!-- STUDENT -->
-  <section id="tab-account">
-    <div class="grid">
-      <div class="card">
-        <h2>Merit Points balance</h2>
-        <p class="sub">Earned for attendance, on-time work and passed modules. No cash value.</p>
-        <div class="big" id="balance">–</div>
-        <p class="note" id="enrolLine">Connect your wallet to see your points.</p>
-      </div>
-      <div class="card">
-        <h2>Learner tier</h2>
-        <p class="sub">Bronze up to 299 points, Silver 300 to 799, Gold 800 and above (this year).</p>
-        <div class="big" id="tier">–</div>
-        <p class="note" id="earned">Points earned to date: –</p>
-      </div>
-    </div>
-    <div class="card" style="margin-top:18px">
-      <h2>My credentials</h2>
-      <p class="sub">Soulbound certificates for your awards. No name or grades are stored on-chain.</p>
-      <div class="certs" id="creds"><p class="note">No credentials yet.</p></div>
-    </div>
-    <div class="card" style="margin-top:18px">
-      <h2>Spend Merit Points on campus</h2>
-      <p class="sub">Redeeming burns the points; the canteen, print shop, library or events office then gives you the perk.</p>
-      <div id="perks"><p class="note">Perks appear here once the college has set them.</p></div>
-    </div>
-  </section>
+<div class="stats">
+  <div class="container">
+    <div class="stat"><b>3,800</b><span>Students</span></div>
+    <div class="stat"><b>1,200</b><span>Awards each year</span></div>
+    <div class="stat"><b>28%</b><span>International students</span></div>
+    <div class="stat"><b>NFQ 6–9</b><span>Certificate to master's</span></div>
+  </div>
+</div>
 
-  <!-- REGISTRAR -->
-  <section id="tab-console" class="hidden">
-    <p class="note" id="ownerNote">Only the college's registrar account can use these actions.</p>
-    <div class="grid">
-      <div class="card">
-        <h2>1. Enrol a student wallet</h2>
-        <p class="sub">Only enrolled wallets can earn and spend Merit Points.</p>
-        <label>Student wallet address</label><input id="eAddr" placeholder="0x...">
-        <div class="actions"><button id="eYes">Enrol</button><button class="secondary" id="eNo">Remove (student left)</button></div>
-      </div>
-      <div class="card">
-        <h2>2. Award Merit Points</h2>
-        <p class="sub">Every award is recorded on-chain with its reason. Maximum 500 per award.</p>
-        <label>Student wallet</label><input id="aTo" placeholder="0x...">
-        <label>Activity</label>
-        <select id="aAct">
-          <option value="5|Full attendance for a week">Full attendance for a week (5)</option>
-          <option value="10|Assignment submitted on time">Assignment submitted on time (10)</option>
-          <option value="50|Module passed">Module passed (50)</option>
-          <option value="30|Four weeks of peer tutoring">Four weeks of peer tutoring or volunteering (30)</option>
-          <option value="25|Referred a friend who enrolled">Referred a friend who enrolled (25)</option>
-          <option value="100|Graduation bonus">Graduation bonus (100)</option>
-        </select>
-        <div class="actions"><button id="awardBtn">Award points</button></div>
-      </div>
-      <div class="card">
-        <h2>3. Issue a credential</h2>
-        <p class="sub">The official certificate file is hashed in your browser with a random salt. Only the hash goes on-chain.</p>
-        <label>Student wallet</label><input id="cTo" placeholder="0x...">
-        <label>Official certificate file (PDF)</label><input id="cFile" type="file">
-        <div class="row">
-          <div><label>Programme code</label><input id="cProg" value="MSC-FINTECH-L9"></div>
-          <div><label>NFQ level</label><input id="cLevel" type="number" value="9" min="1" max="10"></div>
+<section class="block" id="programmes">
+  <div class="container">
+    <div class="section-head"><div class="eyebrow" style="color:#a07a1c">Study at Whitford</div><h2>Our programmes</h2><div class="divider"></div>
+      <p>Every graduate receives a verifiable digital credential alongside their official QQI award.</p></div>
+    <div class="prog-grid">
+      <div class="prog"><div class="band" style="background:linear-gradient(135deg,#5c1430,#a33a62)">NFQ LEVEL 9</div><div class="body"><h3>MSc in FinTech</h3><p>Blockchain, digital payments and financial data, with industry projects.</p><span class="chip">1 year</span><span class="chip">Full-time</span></div></div>
+      <div class="prog"><div class="band" style="background:linear-gradient(135deg,#3a2a5c,#6a4fa3)">NFQ LEVEL 9</div><div class="body"><h3>MSc in Data Analytics</h3><p>Machine learning, statistics and visualisation for business decisions.</p><span class="chip">1 year</span><span class="chip">Evening option</span></div></div>
+      <div class="prog"><div class="band" style="background:linear-gradient(135deg,#7a5a12,#c9a03d)">NFQ LEVEL 8</div><div class="body"><h3>BA (Hons) in Business</h3><p>Management, marketing and finance with a work placement.</p><span class="chip">3 years</span><span class="chip">Placement</span></div></div>
+      <div class="prog"><div class="band" style="background:linear-gradient(135deg,#1f4f4a,#2f8a7a)">NFQ LEVEL 6</div><div class="body"><h3>Certificate in Python</h3><p>A practical start in programming for career changers.</p><span class="chip">12 weeks</span><span class="chip">Part-time</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="block merit" id="merit">
+  <div class="container">
+    <div class="section-head"><div class="eyebrow" style="color:#a07a1c">Whitford Merit Points</div><h2>Your effort, rewarded</h2><div class="divider"></div>
+      <p>Merit Points are an ERC-20 token on Ethereum. They have no cash value and cannot be traded, so they always reward the student who earned them.</p></div>
+    <div class="three">
+      <div class="step-card"><div class="n">1</div><h3>Earn</h3><ul>
+        <li>Full week of attendance <span>+5</span></li><li>Assignment on time <span>+10</span></li><li>Module passed <span>+50</span></li>
+        <li>Peer tutoring, 4 weeks <span>+30</span></li><li>Refer a friend <span>+25</span></li><li>Graduation bonus <span>+100</span></li></ul></div>
+      <div class="step-card"><div class="n">2</div><h3>Spend on campus</h3><ul>
+        <li>Canteen coffee <span>30</span></li><li>Printing credit, EUR 5 <span>50</span></li><li>Library late-fee waiver <span>40</span></li>
+        <li>Priority study room <span>20</span></li><li>Society or ball ticket <span>100</span></li><li>Give back: hardship fund <span>100</span></li></ul></div>
+      <div class="step-card"><div class="n">3</div><h3>Rise through the tiers</h3><ul>
+        <li><b>Bronze</b> up to 299 points: standard perks</li><li><b>Silver</b> 300 to 799: extended library loans, early room booking</li>
+        <li><b>Gold</b> 800+: priority career-fair appointments and the Dean's engagement list</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="block hub" id="hub">
+  <div class="container">
+    <div class="section-head"><div class="eyebrow">Student Hub</div><h2>Your points and credentials</h2><div class="divider"></div>
+      <p>Connect your student wallet to see your Merit Points, your learner tier and your verified credentials.</p></div>
+    <div class="hub-grid">
+      <div>
+        <div class="idcard">
+          <div class="lbl">WHITFORD STUDENT WALLET</div>
+          <div class="addr" id="addr">Not connected</div>
+          <div class="lbl">MERIT POINTS</div>
+          <div class="points" id="balance">–</div>
+          <div class="tierbar"><i id="tierFill"></i></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px"><span id="tierName">Tier: –</span><span id="tierNext"></span></div>
+          <div style="margin-top:12px" id="enrolLine"><span class="badge b-wait">Connect wallet</span></div>
         </div>
-        <div class="actions"><button id="credBtn">Issue credential</button></div>
-        <div id="saltOut" style="margin-top:10px"></div>
+        <div class="panel" style="margin-top:18px">
+          <h3>Campus perks</h3><p class="sub">Redeeming burns your points; campus services then give you the perk.</p>
+          <div id="perks"><p class="note">Loading perks…</p></div>
+        </div>
       </div>
-      <div class="card">
-        <h2>4. Revoke a credential</h2>
-        <p class="sub">For example after an academic misconduct finding. The credential then shows as invalid to everyone.</p>
-        <label>Credential number (token ID)</label><input id="rId" type="number" placeholder="1">
-        <label>Reason</label><input id="rWhy" value="Academic misconduct finding">
-        <div class="actions"><button class="danger" id="revokeBtn">Revoke</button></div>
-      </div>
-      <div class="card">
-        <h2>5. Set a campus perk</h2>
-        <p class="sub">Add or change an item students can spend points on.</p>
-        <div class="row"><div><label>Perk ID</label><input id="pId" type="number" value="1"></div><div><label>Cost (points)</label><input id="pCost" type="number" value="30"></div></div>
-        <label>Name</label><input id="pName" value="Canteen coffee">
-        <div class="actions"><button id="perkBtn">Save perk</button><button class="secondary" id="perkOffBtn">Switch off</button></div>
+      <div class="panel">
+        <h3>My credentials</h3><p class="sub">Soulbound ERC-721 certificates issued by the Registrar. No name or grades are stored on-chain.</p>
+        <div class="creds" id="creds"><p class="note">Connect your wallet to see your credentials.</p></div>
       </div>
     </div>
-    <div class="card" style="margin-top:18px">
-      <h2>Recent on-chain activity</h2>
-      <p class="sub">Enrolments, awards, credentials and redemptions, all public on Sepolia.</p>
-      <div class="log" id="log"><p class="note">Connect to load activity.</p></div>
-    </div>
-  </section>
+  </div>
+</section>
 
-  <!-- EMPLOYER -->
-  <section id="tab-verify" class="hidden">
-    <div class="grid">
-      <div class="card">
-        <h2>Check by credential number</h2>
-        <p class="sub">Free and instant. No need to contact the college.</p>
-        <label>Credential number</label><input id="chkId" type="number" placeholder="1">
-        <div class="actions"><button id="chkBtn">Check</button></div>
-        <div id="chkOut" style="margin-top:16px"></div>
+<section class="block" id="verify">
+  <div class="container">
+    <div class="section-head"><div class="eyebrow" style="color:#a07a1c">For employers and universities</div><h2>Verify a Whitford degree</h2><div class="divider"></div>
+      <p>Free, instant and available to anyone. No need to contact the Registrar's office.</p></div>
+    <div class="verify-grid">
+      <div class="panel">
+        <h3>By credential number</h3><p class="sub">Enter the number the graduate gave you.</p>
+        <label>Credential number</label><input id="chkId" type="number" placeholder="e.g. 1">
+        <div class="actions"><button class="btn-maroon" id="chkBtn">Verify</button></div>
+        <div class="result" id="chkOut"></div>
       </div>
-      <div class="card">
-        <h2>Check a certificate file</h2>
-        <p class="sub">Upload the PDF the graduate gave you, with the salt they shared. If the file was altered in any way, it will not match.</p>
+      <div class="panel">
+        <h3>By certificate file</h3><p class="sub">Upload the PDF with the salt the graduate shared. Change even one character and it will not match.</p>
         <label>Certificate file</label><input id="vFile" type="file">
-        <label>Salt from the graduate</label><input id="vSalt" placeholder="0x...">
-        <div class="actions"><button id="fileBtn">Check file</button></div>
-        <div id="fileOut" style="margin-top:16px"></div>
+        <label>Salt from the graduate</label><input id="vSalt" placeholder="0x…">
+        <div class="actions"><button class="btn-maroon" id="fileBtn">Check file</button></div>
+        <div class="result" id="fileOut"></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- HOW -->
-  <section id="tab-how" class="hidden">
-    <div class="card">
-      <h2>How Whitford Global College uses Ethereum</h2>
-      <p class="sub">Student records, grades and personal data stay in the college's own systems. Only a fingerprint of each award and the points are on-chain.</p>
-      <div class="flow"><span>Student enrols, wallet linked</span><b>→</b><span>Earns Merit Points</span><b>→</b><span>Redeems campus perks</span><b>→</b><span>Award approved, credential NFT issued</span><b>→</b><span>Employer verifies in seconds</span></div>
-      <ol class="steps">
-        <li><b>ERC-721 (WhitfordCredential):</b> one soulbound credential per award. It stores a salted hash of the certificate file, the programme code, NFQ level and award date. No name or grades.</li>
-        <li><b>ERC-20 (WhitfordPoints):</b> Whitford Merit Points, 0 decimals, non-transferable, only for enrolled students, with a cap of 500 per award.</li>
-        <li><b>Why a salted hash?</b> The hash proves a file is genuine without revealing it. The salt stops anyone guessing the hash, which supports GDPR.</li>
-        <li><b>The QQI certificate</b> remains the official award. The credential is a verifiable companion to it.</li>
-      </ol>
+<section class="block reg" id="registrar">
+  <div class="container">
+    <div class="section-head"><div class="eyebrow" style="color:#a07a1c">Staff only</div><h2>Registrar's office</h2><div class="divider"></div>
+      <p>Enrol students, award Merit Points, set campus perks, and issue or revoke credentials.</p></div>
+    <div class="lock" id="regLock">
+      <p style="font-size:15px">🔒 The Registrar portal unlocks when the Registrar's wallet is connected.</p>
+      <p class="note">Registrar wallet: <b id="regAddr">loading…</b></p>
+      <div class="actions" style="justify-content:center"><button class="btn-maroon" id="regSwitch">Switch to the Registrar wallet</button></div>
     </div>
-  </section>
+    <div id="regPanel" class="hidden">
+      <div class="reg-grid">
+        <div class="panel"><h3>Enrol a student</h3><p class="sub">Only enrolled wallets can earn and spend points.</p>
+          <label>Student wallet</label><input id="eAddr" placeholder="0x…">
+          <div class="actions"><button class="btn-maroon" id="eYes">Enrol</button><button class="btn-line" id="eNo">Remove</button></div></div>
+        <div class="panel"><h3>Award Merit Points</h3><p class="sub">Recorded on-chain with its reason. Maximum 500.</p>
+          <label>Student wallet</label><input id="aTo" placeholder="0x…">
+          <label>Activity</label><select id="aAct">
+            <option value="5|Full attendance for a week">Full attendance for a week (+5)</option>
+            <option value="10|Assignment submitted on time">Assignment submitted on time (+10)</option>
+            <option value="50|Module passed">Module passed (+50)</option>
+            <option value="30|Four weeks of peer tutoring">Peer tutoring, 4 weeks (+30)</option>
+            <option value="25|Referred a friend who enrolled">Referred a friend (+25)</option>
+            <option value="100|Graduation bonus">Graduation bonus (+100)</option></select>
+          <div class="actions"><button class="btn-maroon" id="awardBtn">Award</button></div></div>
+        <div class="panel"><h3>Campus perk</h3><p class="sub">Add or change a perk students can redeem.</p>
+          <div class="row"><div><label>Perk ID</label><input id="pId" type="number" value="1"></div><div><label>Points</label><input id="pCost" type="number" value="30"></div></div>
+          <label>Name</label><select id="pName">
+            <option>Canteen coffee</option><option>Printing credit EUR 5</option><option>Library late-fee waiver</option>
+            <option>Priority study room</option><option>Society or ball ticket</option><option>Give back: hardship fund donation</option></select>
+          <div class="actions"><button class="btn-maroon" id="perkBtn">Save</button><button class="btn-line" id="perkOffBtn">Switch off</button></div></div>
+        <div class="panel" style="grid-column:span 2"><h3>Issue a credential</h3><p class="sub">The certificate PDF is fingerprinted in your browser with a random salt. Only the fingerprint goes on-chain.</p>
+          <div class="row"><div><label>Student wallet</label><input id="cTo" placeholder="0x…"></div><div><label>Certificate PDF</label><input id="cFile" type="file"></div></div>
+          <div class="row"><div><label>Programme</label><select id="cProg">
+            <option value="MSC-FINTECH-L9|9">MSc in FinTech (NFQ 9)</option><option value="MSC-DATA-L9|9">MSc in Data Analytics (NFQ 9)</option>
+            <option value="BA-BUS-L8|8">BA (Hons) in Business (NFQ 8)</option><option value="CERT-PY-L6|6">Certificate in Python (NFQ 6)</option></select></div></div>
+          <div class="actions"><button class="btn-gold" id="credBtn">Issue credential</button></div>
+          <div id="saltOut"></div></div>
+        <div class="panel"><h3>Revoke a credential</h3><p class="sub">For example after a misconduct finding.</p>
+          <label>Credential number</label><input id="rId" type="number" placeholder="1">
+          <label>Reason</label><input id="rWhy" value="Academic misconduct finding">
+          <div class="actions"><button class="btn-red" id="revokeBtn">Revoke</button></div></div>
+      </div>
+      <div class="panel" style="margin-top:18px"><h3>Recent activity on Ethereum</h3><p class="sub">Every action is a public record on Sepolia.</p><div class="log" id="log"><p class="note">Loading…</p></div></div>
+    </div>
+  </div>
+</section>
 
-  <!-- SETUP -->
-  <section id="tab-setup" class="hidden">
-    <div class="card" style="max-width:640px">
-      <h2>Contract addresses</h2>
-      <p class="sub">Paste the addresses from Remix after you deploy on Sepolia. They are saved in this browser.</p>
-      <label>WhitfordCredential (ERC-721) address</label><input id="sCred" placeholder="0x...">
-      <label>WhitfordPoints (ERC-20) address</label><input id="sPts" placeholder="0x...">
-      <label>Deployment block (optional, speeds up loading history)</label><input id="sBlock" type="number" placeholder="e.g. 7300000">
-      <div class="actions"><button id="saveSetup">Save</button></div>
+<footer>
+  <div class="container">
+    <div class="cols">
+      <div><h4>Whitford Global College</h4><p>An independent college in Dublin offering business, computing and FinTech programmes from certificate to master's level.</p></div>
+      <div><h4>Study</h4><a href="#programmes">Programmes</a><a href="#merit">Merit Points</a><a href="#hub">Student Hub</a></div>
+      <div><h4>Employers</h4><a href="#verify">Verify a degree</a><a href="#registrar">Registrar</a></div>
+      <div><h4>On Ethereum</h4><a target="_blank" href="https://sepolia.etherscan.io/address/0x1F553b6E6589b19E30674a633E8eeAF8265b5157">Credential contract</a><a target="_blank" href="https://sepolia.etherscan.io/address/0xdc97640C2Beb1e09f82A570f71ff90855BC2584d">Merit Points contract</a></div>
     </div>
-  </section>
-</main>
+    <div class="legal">Whitford Global College is a fictional college created for an NCI Blockchain Technologies project. Runs on the Sepolia test network; no real money is involved.</div>
+  </div>
+</footer>
 <div id="toast"></div>
 
 <script>
 const EXPLORER = "https://sepolia.etherscan.io";
+const READ_RPC = "https://ethereum-sepolia-rpc.publicnode.com";
+const ADDR = { cred: "0x1f553b6e6589b19e30674a633e8eeaf8265b5157", pts: "0xdc97640c2beb1e09f82a570f71ff90855bc2584d" };
 const CRED_ABI = [
   "function owner() view returns (address)",
-  "function ownerOf(uint256) view returns (address)",
   "function verify(uint256 tokenId) view returns (bool valid, address holder, string programmeCode, uint8 nfqLevel, uint64 awardDate)",
   "function verifyDocument(bytes32 documentHash) view returns (bool valid, uint256 tokenId)",
   "function issue(address to, bytes32 documentHash, string programmeCode, uint8 nfqLevel, uint64 awardDate) returns (uint256)",
@@ -231,201 +391,196 @@ const PTS_ABI = [
   "function awardPoints(address student, uint256 amount, string reason)",
   "function setPerk(uint256 perkId, string name, uint256 cost, bool active)",
   "function redeem(uint256 perkId)",
-  "event StudentEnrolled(address indexed wallet, bool status)",
   "event PointsAwarded(address indexed student, uint256 amount, string reason)",
   "event PerkRedeemed(address indexed student, uint256 indexed perkId, uint256 cost)"
 ];
+const PERK_ICON = { "coffee": "☕", "print": "🖨️", "library": "📚", "study": "🪑", "ticket": "🎟️", "society": "🎟️", "give": "💛", "hardship": "💛" };
+const PROG_NAME = { "MSC-FINTECH-L9": "MSc in FinTech", "MSC-DATA-L9": "MSc in Data Analytics", "BA-BUS-L8": "BA (Hons) in Business", "CERT-PY-L6": "Certificate in Python" };
 
-let provider, signer, me, cred, pts, cfg = loadCfg();
-function loadCfg() { try { return JSON.parse(localStorage.getItem("wgcCfg")) || {}; } catch (e) { return {}; } }
-function saveCfg() { try { localStorage.setItem("wgcCfg", JSON.stringify(cfg)); } catch (e) {} }
 const $ = id => document.getElementById(id);
-function toast(msg, ms = 5000) { const t = $("toast"); t.innerHTML = msg; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", ms); }
+const reader = new ethers.JsonRpcProvider(READ_RPC);
+let provider, signer, me, owner, credR, ptsR, credW, ptsW;
+credR = new ethers.Contract(ADDR.cred, CRED_ABI, reader);
+ptsR = new ethers.Contract(ADDR.pts, PTS_ABI, reader);
+
+function toast(msg, ms = 6000) { const t = $("toast"); t.innerHTML = msg; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", ms); }
 function short(a) { return a ? a.slice(0, 6) + "…" + a.slice(-4) : ""; }
 function errMsg(e) { return (e && (e.reason || e.shortMessage || (e.info && e.info.error && e.info.error.message) || e.message)) || "Something went wrong"; }
-function fmtDate(ts) { return new Date(Number(ts) * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }); }
+function fmtDate(ts) { return new Date(Number(ts) * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" }); }
+function same(a, b) { return a && b && a.toLowerCase() === b.toLowerCase(); }
+function icon(name) { const n = name.toLowerCase(); for (const k in PERK_ICON) if (n.includes(k)) return PERK_ICON[k]; return "🎓"; }
 
-document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
-  document.querySelectorAll("#tabs button").forEach(x => x.classList.remove("active")); b.classList.add("active");
-  document.querySelectorAll("main > section").forEach(s => s.classList.add("hidden"));
-  $("tab-" + b.dataset.tab).classList.remove("hidden");
-});
+async function qf(contract, filter) {
+  try { return await contract.queryFilter(filter, 0); }
+  catch (e) { const latest = await reader.getBlockNumber(); return await contract.queryFilter(filter, Math.max(0, latest - 45000)); }
+}
 
-$("sCred").value = cfg.cred || ""; $("sPts").value = cfg.pts || ""; $("sBlock").value = cfg.block || "";
-$("saveSetup").onclick = () => {
-  cfg = { cred: $("sCred").value.trim(), pts: $("sPts").value.trim(), block: $("sBlock").value.trim() };
-  if (!ethers.isAddress(cfg.cred) || !ethers.isAddress(cfg.pts)) return toast("Please paste two valid contract addresses.");
-  saveCfg(); toast("Saved. Connect MetaMask to load your data."); if (signer) initContracts();
-};
+// ---------- public data (no wallet needed) ----------
+async function loadPublic() {
+  try { owner = await ptsR.owner(); $("regAddr").textContent = owner; } catch (e) { $("regAddr").textContent = "could not load (check your internet connection)"; }
+  loadPerks(); updateRole();
+}
 
+// ---------- wallet ----------
 async function connect() {
-  if (!window.ethereum) return toast("MetaMask was not found. Install it, then open this page through a local web server (see the README).", 8000);
+  if (!window.ethereum) return toast("MetaMask was not found in this browser. Open this page in the browser where MetaMask is installed, through Live Server (http://127.0.0.1…).", 9000);
   try {
     await window.ethereum.request({ method: "eth_requestAccounts" });
-    try { await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0xaa36a7" }] }); }
-    catch (e) { toast("Please switch MetaMask to the Sepolia test network."); }
+    try { await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0xaa36a7" }] }); } catch (e) { toast("Please switch MetaMask to Sepolia."); }
     provider = new ethers.BrowserProvider(window.ethereum);
     signer = await provider.getSigner(); me = await signer.getAddress();
-    const net = await provider.getNetwork();
-    $("netPill").textContent = (net.chainId === 11155111n ? "Sepolia" : "Wrong network") + " · " + short(me);
+    credW = new ethers.Contract(ADDR.cred, CRED_ABI, signer);
+    ptsW = new ethers.Contract(ADDR.pts, PTS_ABI, signer);
+    $("netPill").textContent = "Sepolia · " + short(me);
     $("connectBtn").textContent = "Connected";
-    initContracts();
+    $("addr").textContent = me;
+    refresh();
   } catch (e) { toast(errMsg(e)); }
 }
-$("connectBtn").onclick = connect;
+async function switchAccount() {
+  if (!window.ethereum) return toast("MetaMask was not found in this browser.");
+  try { await window.ethereum.request({ method: "wallet_requestPermissions", params: [{ eth_accounts: {} }] }); await connect(); }
+  catch (e) { toast(errMsg(e)); }
+}
+$("connectBtn").onclick = connect; $("switchBtn").onclick = switchAccount; $("regSwitch").onclick = switchAccount;
 if (window.ethereum && window.ethereum.on) { window.ethereum.on("accountsChanged", () => connect()); window.ethereum.on("chainChanged", () => location.reload()); }
 
-function initContracts() {
-  if (!cfg.cred || !cfg.pts) { toast("Add your contract addresses in the Setup tab first."); return; }
-  cred = new ethers.Contract(cfg.cred, CRED_ABI, signer);
-  pts = new ethers.Contract(cfg.pts, PTS_ABI, signer);
-  refresh();
+function updateRole(enrolled) {
+  const isReg = same(me, owner);
+  $("regLock").classList.toggle("hidden", isReg);
+  $("regPanel").classList.toggle("hidden", !isReg);
+  $("roleLbl").textContent = !me ? "" : isReg ? "Registrar" : enrolled ? "Student" : "Visitor";
+  if (isReg) loadLog();
 }
 
 async function refresh() {
-  if (!pts) return;
+  if (!me) return;
   try {
-    const [bal, en, owner] = await Promise.all([pts.balanceOf(me), pts.enrolled(me), pts.owner()]);
-    $("balance").textContent = bal.toString() + " points";
-    $("enrolLine").innerHTML = en ? '<span class="tag ok">Enrolled student wallet</span>' : '<span class="tag wait">Not enrolled: ask the registrar to enrol this wallet</span>';
-    $("ownerNote").innerHTML = owner.toLowerCase() === me.toLowerCase()
-      ? '<span class="tag ok">You are connected as the college registrar</span>'
-      : 'You are not the registrar account (' + short(owner) + '). These actions will be rejected by the contract.';
-  } catch (e) { toast("Could not read the contracts. Check the addresses and network. " + errMsg(e), 8000); }
-  loadEarned(); loadCreds(); loadPerks(); loadLog();
+    const [bal, en] = await Promise.all([ptsR.balanceOf(me), ptsR.enrolled(me)]);
+    $("balance").textContent = bal.toString();
+    const isReg = same(me, owner);
+    $("enrolLine").innerHTML = isReg ? '<span class="badge b-gold">REGISTRAR WALLET</span> <span style="font-size:12px;opacity:.8">Use the Registrar portal below</span>'
+      : en ? '<span class="badge b-ok">ENROLLED STUDENT</span>' : '<span class="badge b-wait">NOT ENROLLED</span> <span style="font-size:12px;opacity:.8">Ask the Registrar to enrol this wallet</span>';
+    updateRole(en);
+  } catch (e) { toast("Could not read the college contracts: " + errMsg(e), 9000); }
+  loadTier(); loadCreds(); loadPerks();
 }
 
-async function loadEarned() {
+async function loadTier() {
   try {
-    const from = cfg.block ? Number(cfg.block) : 0;
-    const ev = await pts.queryFilter(pts.filters.PointsAwarded(me), from);
+    const ev = await qf(ptsR, ptsR.filters.PointsAwarded(me));
     const total = ev.reduce((s, e) => s + Number(e.args.amount), 0);
-    $("earned").textContent = "Points earned to date: " + total;
-    $("tier").textContent = total >= 800 ? "Gold" : total >= 300 ? "Silver" : "Bronze";
+    const tier = total >= 800 ? "Gold" : total >= 300 ? "Silver" : "Bronze";
+    const next = total >= 800 ? null : total >= 300 ? 800 : 300;
+    $("tierName").textContent = "Tier: " + tier + " · " + total + " earned";
+    $("tierNext").textContent = next ? (next - total) + " to " + (next === 300 ? "Silver" : "Gold") : "Top tier";
+    $("tierFill").style.width = Math.min(100, next ? (total / next) * 100 : 100) + "%";
   } catch (e) {}
 }
 
-function credCard(id, v) {
-  const ok = v.valid;
-  return `<div class="cert" style="${ok ? "" : "filter:grayscale(.85)"}">
-    <div style="font-size:12px;letter-spacing:1px;opacity:.85">WHITFORD GLOBAL COLLEGE · CREDENTIAL</div>
-    <div class="num">#${String(id).padStart(4, "0")}</div>
-    <dl><dt>Programme</dt><dd>${v.programmeCode}</dd><dt>NFQ level</dt><dd>${v.nfqLevel}</dd><dt>Awarded</dt><dd>${fmtDate(v.awardDate)}</dd><dt>Status</dt><dd>${ok ? "VALID" : "REVOKED"}</dd></dl>
+function credHTML(id, v) {
+  const prog = PROG_NAME[v.programmeCode] || v.programmeCode;
+  return `<div class="parch ${v.valid ? "" : "revoked"}">
+    <div class="small">Whitford Global College · Dublin</div>
+    <div class="ttl">Verified Credential</div>
+    <div class="num">No. ${String(id).padStart(4, "0")}</div>
+    <dl><dt>Award</dt><dd>${prog}</dd><dt>NFQ level</dt><dd>${v.nfqLevel}</dd><dt>Awarded</dt><dd>${fmtDate(v.awardDate)}</dd><dt>Status</dt><dd style="color:${v.valid ? "#1f7a4c" : "#b1352a"}">${v.valid ? "Valid" : "Revoked"}</dd></dl>
+    <div class="seal">WGC<br>ERC-721</div>
   </div>`;
 }
 
 async function loadCreds() {
   const box = $("creds");
   try {
-    const from = cfg.block ? Number(cfg.block) : 0;
-    const ev = await cred.queryFilter(cred.filters.CredentialIssued(null, me), from);
-    if (!ev.length) { box.innerHTML = '<p class="note">No credentials for this wallet yet.</p>'; return; }
-    box.innerHTML = "";
-    for (const e of ev.reverse()) {
-      const v = await cred.verify(e.args.tokenId);
-      if (v.holder.toLowerCase() === me.toLowerCase()) box.insertAdjacentHTML("beforeend", credCard(e.args.tokenId, v));
-    }
-    if (!box.innerHTML) box.innerHTML = '<p class="note">No credentials for this wallet yet.</p>';
-  } catch (e) { box.innerHTML = '<p class="note">Could not load credentials (' + errMsg(e) + '). Try adding the deployment block in Setup.</p>'; }
+    const ev = await qf(credR, credR.filters.CredentialIssued(null, me));
+    let html = "";
+    for (const e of ev.reverse()) { const v = await credR.verify(e.args.tokenId); if (same(v.holder, me)) html += credHTML(e.args.tokenId, v); }
+    box.innerHTML = html || '<p class="note">No credentials for this wallet yet. They are issued by the Registrar when an award is approved.</p>';
+  } catch (e) { box.innerHTML = '<p class="note">Could not load credentials: ' + errMsg(e) + '</p>'; }
 }
 
 async function loadPerks() {
-  const box = $("perks"); box.innerHTML = ""; let found = 0;
+  const box = $("perks"); let html = "";
   for (let i = 1; i <= 10; i++) {
     try {
-      const p = await pts.perks(i);
-      if (p.cost > 0n && p.active) {
-        found++;
-        box.insertAdjacentHTML("beforeend", `<div class="perk"><div><b>${p.name}</b><div class="note">Perk #${i}</div></div><div style="display:flex;gap:10px;align-items:center"><span class="tag ok">${p.cost} points</span><button data-perk="${i}">Redeem</button></div></div>`);
-      }
+      const p = await ptsR.perks(i);
+      if (p.cost > 0n && p.active) html += `<div class="perk"><div class="ic">${icon(p.name)}</div><div class="grow"><b>${p.name}</b><small>${p.cost} points</small></div><button class="btn-maroon btn-small" data-perk="${i}">Redeem</button></div>`;
     } catch (e) {}
   }
-  if (!found) box.innerHTML = '<p class="note">No perks available yet. The registrar sets them in the console.</p>';
-  box.querySelectorAll("button[data-perk]").forEach(b => b.onclick = () => send(() => pts.redeem(b.dataset.perk), "Perk redeemed. Show this to campus services."));
+  box.innerHTML = html || '<p class="note">No perks yet. The Registrar adds them in the Registrar portal.</p>';
+  box.querySelectorAll("button[data-perk]").forEach(b => b.onclick = () => send(() => ptsW.redeem(b.dataset.perk), "Perk redeemed. Show this message at the counter."));
 }
 
 async function loadLog() {
   const box = $("log");
   try {
-    const from = cfg.block ? Number(cfg.block) : 0;
     const [a, b, c, d] = await Promise.all([
-      pts.queryFilter(pts.filters.PointsAwarded(), from), pts.queryFilter(pts.filters.PerkRedeemed(), from),
-      cred.queryFilter(cred.filters.CredentialIssued(), from), cred.queryFilter(cred.filters.CredentialRevoked(), from)]);
+      qf(ptsR, ptsR.filters.PointsAwarded()), qf(ptsR, ptsR.filters.PerkRedeemed()),
+      qf(credR, credR.filters.CredentialIssued()), qf(credR, credR.filters.CredentialRevoked())]);
     const rows = [
-      ...a.map(e => [e.blockNumber, `${e.args.amount} points to ${short(e.args.student)}: ${e.args.reason}`, e.transactionHash]),
-      ...b.map(e => [e.blockNumber, `${short(e.args.student)} redeemed perk #${e.args.perkId} for ${e.args.cost} points`, e.transactionHash]),
-      ...c.map(e => [e.blockNumber, `Credential #${e.args.tokenId} (${e.args.programmeCode}) issued to ${short(e.args.student)}`, e.transactionHash]),
-      ...d.map(e => [e.blockNumber, `Credential #${e.args.tokenId} revoked: ${e.args.reason}`, e.transactionHash])
+      ...a.map(e => [e.blockNumber, `🎯 ${e.args.amount} points to ${short(e.args.student)}: ${e.args.reason}`, e.transactionHash]),
+      ...b.map(e => [e.blockNumber, `🛍️ ${short(e.args.student)} redeemed perk #${e.args.perkId} for ${e.args.cost} points`, e.transactionHash]),
+      ...c.map(e => [e.blockNumber, `🎓 Credential #${e.args.tokenId} (${e.args.programmeCode}) issued to ${short(e.args.student)}`, e.transactionHash]),
+      ...d.map(e => [e.blockNumber, `⛔ Credential #${e.args.tokenId} revoked: ${e.args.reason}`, e.transactionHash])
     ].sort((x, y) => y[0] - x[0]).slice(0, 12);
-    box.innerHTML = rows.length ? rows.map(r => `<div>${r[1]} · <a target="_blank" href="${EXPLORER}/tx/${r[2]}">view on Etherscan</a></div>`).join("") : '<p class="note">No activity yet.</p>';
-  } catch (e) { box.innerHTML = '<p class="note">Could not load activity (' + errMsg(e) + ').</p>'; }
+    box.innerHTML = rows.length ? rows.map(r => `<div>${r[1]} · <a target="_blank" href="${EXPLORER}/tx/${r[2]}">Etherscan</a></div>`).join("") : '<p class="note">No activity yet.</p>';
+  } catch (e) { box.innerHTML = '<p class="note">Could not load activity: ' + errMsg(e) + '</p>'; }
 }
 
 async function send(fn, okMsg) {
-  if (!signer || !pts) return toast("Connect MetaMask and add contract addresses first.");
+  if (!signer) return toast("Connect your wallet first.");
   try {
-    toast("Confirm the transaction in MetaMask…", 15000);
+    toast("Confirm the transaction in MetaMask…", 20000);
     const tx = await fn();
-    toast("Sent. Waiting for Sepolia to confirm… " + `<a style="color:#f3d48a" target="_blank" href="${EXPLORER}/tx/${tx.hash}">track</a>`, 30000);
+    toast(`Sent. Waiting for Sepolia… <a style="color:#e7c873" target="_blank" href="${EXPLORER}/tx/${tx.hash}">track</a>`, 40000);
     await tx.wait();
-    toast("✔ " + okMsg + ` <a style="color:#f3d48a" target="_blank" href="${EXPLORER}/tx/${tx.hash}">Etherscan</a>`, 9000);
+    toast("✔ " + okMsg + ` <a style="color:#e7c873" target="_blank" href="${EXPLORER}/tx/${tx.hash}">Etherscan</a>`, 9000);
     refresh();
   } catch (e) { toast("✖ " + errMsg(e), 9000); }
 }
 function addr(id) { const v = $(id).value.trim(); if (!ethers.isAddress(v)) { toast("Please enter a valid wallet address."); throw new Error("bad address"); } return v; }
+async function fileHash(file, saltHex) { const buf = new Uint8Array(await file.arrayBuffer()); return ethers.keccak256(ethers.concat([buf, ethers.getBytes(saltHex)])); }
 
-// salted hash of a file: keccak256(file bytes ++ salt bytes)
-async function fileHash(file, saltHex) {
-  const buf = new Uint8Array(await file.arrayBuffer());
-  return ethers.keccak256(ethers.concat([buf, ethers.getBytes(saltHex)]));
-}
-
-$("eYes").onclick = () => { try { const a = addr("eAddr"); send(() => pts.setEnrolled(a, true), "Student enrolled."); } catch (e) {} };
-$("eNo").onclick = () => { try { const a = addr("eAddr"); send(() => pts.setEnrolled(a, false), "Student removed."); } catch (e) {} };
-$("awardBtn").onclick = () => {
-  try { const to = addr("aTo"); const [n, why] = $("aAct").value.split("|"); send(() => pts.awardPoints(to, n, why), n + " points awarded."); } catch (e) {}
-};
+// registrar actions
+$("eYes").onclick = () => { try { const a = addr("eAddr"); send(() => ptsW.setEnrolled(a, true), "Student enrolled."); } catch (e) {} };
+$("eNo").onclick = () => { try { const a = addr("eAddr"); send(() => ptsW.setEnrolled(a, false), "Student removed."); } catch (e) {} };
+$("awardBtn").onclick = () => { try { const to = addr("aTo"); const [n, why] = $("aAct").value.split("|"); send(() => ptsW.awardPoints(to, n, why), n + " Merit Points awarded."); } catch (e) {} };
+$("pName").onchange = () => { const m = { "Canteen coffee": 30, "Printing credit EUR 5": 50, "Library late-fee waiver": 40, "Priority study room": 20, "Society or ball ticket": 100, "Give back: hardship fund donation": 100 }; $("pCost").value = m[$("pName").value] || 30; };
+$("perkBtn").onclick = () => send(() => ptsW.setPerk($("pId").value, $("pName").value, $("pCost").value, true), "Perk saved.");
+$("perkOffBtn").onclick = () => send(() => ptsW.setPerk($("pId").value, $("pName").value, $("pCost").value || 1, false), "Perk switched off.");
 $("credBtn").onclick = async () => {
   try {
     const to = addr("cTo"); const f = $("cFile").files[0];
-    if (!f) return toast("Choose the official certificate file first.");
-    const salt = ethers.hexlify(ethers.randomBytes(16));
-    const h = await fileHash(f, salt);
-    const awardDate = Math.floor(Date.now() / 1000) - 60;
-    $("saltOut").innerHTML = `<p class="note"><b>Give this salt to the graduate</b> with their certificate file. Employers need both to check it.</p><div class="mono">${salt}</div><p class="note">Document hash stored on-chain:</p><div class="mono">${h}</div>`;
-    send(() => cred.issue(to, h, $("cProg").value.trim(), Number($("cLevel").value), awardDate), "Credential issued to the student's wallet.");
+    if (!f) return toast("Choose the certificate PDF first.");
+    const [code, level] = $("cProg").value.split("|");
+    const salt = ethers.hexlify(ethers.randomBytes(16)); const h = await fileHash(f, salt);
+    $("saltOut").innerHTML = `<p class="note" style="margin-top:12px"><b>Give this salt to the graduate</b> with their PDF. Employers need both.</p><div class="mono">${salt}</div>`;
+    send(() => credW.issue(to, h, code, Number(level), Math.floor(Date.now() / 1000) - 60), "Credential issued to the student's wallet.");
   } catch (e) { if (e.message !== "bad address") toast(errMsg(e)); }
 };
-$("revokeBtn").onclick = () => { const id = $("rId").value; if (!id) return toast("Enter a credential number."); send(() => cred.revoke(id, $("rWhy").value), "Credential revoked."); };
-$("perkBtn").onclick = () => send(() => pts.setPerk($("pId").value, $("pName").value, $("pCost").value, true), "Perk saved.");
-$("perkOffBtn").onclick = () => send(() => pts.setPerk($("pId").value, $("pName").value, $("pCost").value || 1, false), "Perk switched off.");
+$("revokeBtn").onclick = () => { const id = $("rId").value; if (!id) return toast("Enter a credential number."); send(() => credW.revoke(id, $("rWhy").value), "Credential revoked."); };
 
-function reader() {
-  if (!cfg.cred) { toast("Add the contract address in Setup first."); return null; }
-  return new ethers.Contract(cfg.cred, CRED_ABI, provider || new ethers.JsonRpcProvider("https://ethereum-sepolia-rpc.publicnode.com"));
-}
+// verification (public)
 $("chkBtn").onclick = async () => {
-  const out = $("chkOut"), id = $("chkId").value, c = reader();
-  if (!id || !c) return id ? null : toast("Enter a credential number.");
+  const out = $("chkOut"), id = $("chkId").value; if (!id) return toast("Enter a credential number.");
+  out.innerHTML = '<p class="note">Checking the blockchain…</p>';
   try {
-    const v = await c.verify(id);
-    if (v.holder === ethers.ZeroAddress) { out.innerHTML = '<p><span class="tag no">Not found</span></p><p class="note">No credential with this number exists.</p>'; return; }
-    out.innerHTML = `<p><span class="tag ${v.valid ? "ok" : "no"}">${v.valid ? "Genuine and valid" : "Revoked by the college"}</span></p>` + credCard(id, v) +
-      `<p class="note">Issued by Whitford Global College's contract <a target="_blank" href="${EXPLORER}/address/${cfg.cred}">${short(cfg.cred)}</a></p>`;
-  } catch (e) { out.innerHTML = '<p><span class="tag no">Could not check</span></p><p class="note">' + errMsg(e) + '</p>'; }
+    const v = await credR.verify(id);
+    if (v.holder === ethers.ZeroAddress) { out.innerHTML = '<span class="badge b-no">NOT FOUND</span><p class="note">No Whitford credential has this number.</p>'; return; }
+    out.innerHTML = `<p><span class="badge ${v.valid ? "b-ok" : "b-no"}">${v.valid ? "✔ GENUINE AND VALID" : "⛔ REVOKED BY THE COLLEGE"}</span></p>` + credHTML(id, v);
+  } catch (e) { out.innerHTML = '<span class="badge b-no">COULD NOT CHECK</span><p class="note">' + errMsg(e) + '</p>'; }
 };
 $("fileBtn").onclick = async () => {
-  const out = $("fileOut"), f = $("vFile").files[0], salt = $("vSalt").value.trim(), c = reader();
+  const out = $("fileOut"), f = $("vFile").files[0], salt = $("vSalt").value.trim();
   if (!f || !salt) return toast("Choose the file and paste the salt.");
-  if (!c) return;
   try {
-    const h = await fileHash(f, salt);
-    const r = await c.verifyDocument(h);
-    out.innerHTML = r.valid
-      ? `<p><span class="tag ok">Genuine: matches credential #${r.tokenId}</span></p><p class="note">This exact file was issued by Whitford Global College and has not been revoked.</p>`
-      : `<p><span class="tag no">No valid match</span></p><p class="note">The file was changed, the salt is wrong, or the credential was revoked.</p>`;
-  } catch (e) { out.innerHTML = '<p><span class="tag no">Could not check</span></p><p class="note">' + errMsg(e) + '</p>'; }
+    const r = await credR.verifyDocument(await fileHash(f, salt));
+    out.innerHTML = r.valid ? `<span class="badge b-ok">✔ GENUINE: MATCHES CREDENTIAL #${r.tokenId}</span><p class="note">This exact file was issued by Whitford Global College and is still valid.</p>`
+      : `<span class="badge b-no">✖ NO VALID MATCH</span><p class="note">The file was altered, the salt is wrong, or the credential was revoked.</p>`;
+  } catch (e) { out.innerHTML = '<span class="badge b-no">COULD NOT CHECK</span><p class="note">' + errMsg(e) + '</p>'; }
 };
+
+loadPublic();
 </script>
 </body>
 </html>
