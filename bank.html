@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skyline Bank of India | FD Certificates and Maturity Miles</title>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<style>
+  :root { --navy:#13294b; --teal:#14a38b; --teal-soft:#e3f6f2; --ink:#1d2433; --muted:#5b6475; --line:#e2e6ee; --bg:#f5f7fb; --red:#c0392b; --amber:#e8a317; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family: "Segoe UI", Arial, sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:linear-gradient(120deg,var(--navy),#1f4f7a); color:#fff; padding:18px 28px; display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+  .brand { display:flex; align-items:center; gap:12px; }
+  .brand svg { width:44px; height:44px; }
+  .brand h1 { font-size:20px; margin:0; letter-spacing:.3px; }
+  .brand p { margin:2px 0 0; font-size:12px; opacity:.8; }
+  .spacer { flex:1; }
+  .pill { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); padding:6px 12px; border-radius:999px; font-size:12px; }
+  button { font:inherit; cursor:pointer; border:0; border-radius:8px; padding:9px 16px; background:var(--teal); color:#fff; font-weight:600; }
+  button.secondary { background:#fff; color:var(--navy); border:1px solid var(--line); }
+  button.danger { background:var(--red); }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  nav { display:flex; gap:4px; padding:0 28px; background:#fff; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  nav button { background:none; color:var(--muted); border-radius:0; border-bottom:3px solid transparent; padding:14px 16px; }
+  nav button.active { color:var(--navy); border-bottom-color:var(--teal); }
+  main { max-width:1100px; margin:24px auto; padding:0 20px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px; box-shadow:0 1px 2px rgba(20,30,60,.04); }
+  .card h2 { font-size:16px; margin:0 0 4px; color:var(--navy); }
+  .card .sub { font-size:13px; color:var(--muted); margin:0 0 14px; }
+  .big { font-size:34px; font-weight:700; color:var(--navy); }
+  label { display:block; font-size:12px; color:var(--muted); margin:10px 0 4px; font-weight:600; }
+  input, select { width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:8px; font:inherit; background:#fff; }
+  .row { display:flex; gap:10px; } .row > * { flex:1; }
+  .actions { margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; }
+  .tag { display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; }
+  .ok { background:var(--teal-soft); color:#0d7a68; } .no { background:#fde8e6; color:var(--red); } .wait { background:#fff4dc; color:#9a6a00; }
+  .cert { border-radius:14px; padding:18px; color:#fff; background:linear-gradient(160deg,#0f3b46,#1b6b6b 60%,#2bb39a); position:relative; overflow:hidden; min-height:170px; }
+  .cert .num { font-size:30px; font-weight:800; margin:6px 0; }
+  .cert dl { display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:13px; margin:8px 0 0; }
+  .cert dt { opacity:.75; } .cert dd { margin:0; text-align:right; font-weight:600; }
+  .cert .skyline { position:absolute; left:0; right:0; bottom:0; height:30px; opacity:.25; }
+  .certs { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+  .perk { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--line); gap:10px; }
+  .perk:last-child { border-bottom:0; }
+  .log { font-size:13px; } .log div { padding:8px 0; border-bottom:1px solid var(--line); }
+  a { color:#0d7a68; }
+  .hidden { display:none !important; }
+  .note { font-size:12px; color:var(--muted); }
+  .steps li { margin:6px 0; }
+  #toast { position:fixed; right:20px; bottom:20px; max-width:380px; background:var(--navy); color:#fff; padding:12px 16px; border-radius:10px; font-size:13px; box-shadow:0 6px 24px rgba(0,0,0,.2); display:none; }
+  .flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:13px; }
+  .flow span { background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
+  .flow b { color:var(--teal); }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="none" stroke="#5fe0c6" stroke-width="2.5"/><rect x="12" y="22" width="5" height="10" fill="#5fe0c6"/><rect x="19.5" y="15" width="5" height="17" fill="#5fe0c6"/><rect x="27" y="11" width="5" height="21" fill="#5fe0c6"/></svg>
+    <div><h1>Skyline Bank of India</h1><p>Fixed deposit certificates (ERC-721) and Skyline Maturity Miles (ERC-20)</p></div>
+  </div>
+  <div class="spacer"></div>
+  <span class="pill" id="netPill">Not connected</span>
+  <button id="connectBtn">Connect MetaMask</button>
+</header>
+
+<nav id="tabs">
+  <button data-tab="account" class="active">My account</button>
+  <button data-tab="console">Bank console</button>
+  <button data-tab="verify">Verify a certificate</button>
+  <button data-tab="how">How it works</button>
+  <button data-tab="setup">Setup</button>
+</nav>
+
+<main>
+  <!-- MY ACCOUNT -->
+  <section id="tab-account">
+    <div class="grid">
+      <div class="card">
+        <h2>Maturity Miles balance</h2>
+        <p class="sub">1 token = Rs 1 of bank perks. Never cash.</p>
+        <div class="big" id="balance">–</div>
+        <p class="note" id="verifiedLine">Connect your wallet to see your balance.</p>
+      </div>
+      <div class="card">
+        <h2>Your wallet</h2>
+        <p class="sub">The address the bank links to your FD.</p>
+        <div id="addr" style="word-break:break-all;font-family:monospace;font-size:13px">–</div>
+        <div class="actions"><button class="secondary" id="refreshBtn">Refresh</button></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h2>My FD certificates</h2>
+      <p class="sub">Soulbound NFTs: they prove your deposit exists and cannot be transferred. Your name and deposit amount are never stored on-chain.</p>
+      <div class="certs" id="certs"><p class="note">No certificates found yet.</p></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h2>Spend Maturity Miles</h2>
+      <p class="sub">Redeeming burns the tokens; the bank then delivers the perk through its normal systems.</p>
+      <div id="perks"><p class="note">Perks appear here once the bank has set them.</p></div>
+    </div>
+  </section>
+
+  <!-- BANK CONSOLE -->
+  <section id="tab-console" class="hidden">
+    <p class="note" id="ownerNote">Only the bank's issuer account can use these actions. Other accounts will see their transactions rejected by the contract.</p>
+    <div class="grid">
+      <div class="card">
+        <h2>1. Verify a customer wallet</h2>
+        <p class="sub">After KYC, allow the wallet to hold Maturity Miles.</p>
+        <label>Customer wallet address</label><input id="vAddr" placeholder="0x...">
+        <div class="actions"><button id="vYes">Verify</button><button class="secondary" id="vNo">Remove</button></div>
+      </div>
+      <div class="card">
+        <h2>2. Issue an FD certificate</h2>
+        <p class="sub">Mints the soulbound NFT to the customer's wallet.</p>
+        <label>Customer wallet</label><input id="iTo" placeholder="0x...">
+        <div class="row">
+          <div><label>Deposit reference</label><input id="iRef" type="number" placeholder="1001"></div>
+          <div><label>Plan</label><select id="iTerm"><option value="6">6 months</option><option value="12" selected>12 months</option><option value="24">24 months</option><option value="36">36 months</option></select></div>
+        </div>
+        <label>Matures in (minutes, short for the demo)</label><input id="iMins" type="number" value="5">
+        <div class="actions"><button id="issueBtn">Issue certificate</button></div>
+      </div>
+      <div class="card">
+        <h2>3. Mint Maturity Miles</h2>
+        <p class="sub">Welcome bonus or maturity reward. Rule: 1 token per Rs 200 per year, capped at 2,000.</p>
+        <label>Customer wallet</label><input id="mTo" placeholder="0x...">
+        <div class="row">
+          <div><label>Deposit amount (Rs)</label><input id="mAmt" type="number" placeholder="100000"></div>
+          <div><label>Term (months)</label><input id="mTerm" type="number" value="12"></div>
+        </div>
+        <label>Tokens to mint</label><input id="mTokens" type="number" value="10">
+        <div class="actions"><button class="secondary" id="calcBtn">Calculate reward</button><button class="secondary" id="welcomeBtn">Welcome bonus (10)</button><button id="mintBtn">Mint</button></div>
+      </div>
+      <div class="card">
+        <h2>4. Mature a certificate</h2>
+        <p class="sub">After the bank pays out in core banking, burn the certificate. Then mint the reward.</p>
+        <label>Certificate number (token ID)</label><input id="matId" type="number" placeholder="1">
+        <div class="actions"><button id="matureBtn">Mature and burn</button></div>
+      </div>
+      <div class="card">
+        <h2>5. Set a perk</h2>
+        <p class="sub">Add or change an item in the rewards catalogue.</p>
+        <div class="row"><div><label>Perk ID</label><input id="pId" type="number" value="1"></div><div><label>Cost (tokens)</label><input id="pCost" type="number" value="200"></div></div>
+        <label>Name</label><input id="pName" value="Forex charge waiver">
+        <div class="actions"><button id="perkBtn">Save perk</button><button class="secondary" id="perkOffBtn">Switch off</button></div>
+      </div>
+      <div class="card">
+        <h2>6. Link certificate artwork</h2>
+        <p class="sub">Point a certificate at its personalised metadata on IPFS.</p>
+        <label>Certificate number</label><input id="uId" type="number" placeholder="1">
+        <label>Metadata URI</label><input id="uUri" placeholder="ipfs://CID/0001.json">
+        <div class="actions"><button id="uriBtn">Set token URI</button></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h2>Recent on-chain activity</h2>
+      <p class="sub">Every issue, maturity, mint and redemption is a public record on Sepolia.</p>
+      <div class="log" id="log"><p class="note">Connect to load activity.</p></div>
+    </div>
+  </section>
+
+  <!-- VERIFY -->
+  <section id="tab-verify" class="hidden">
+    <div class="card" style="max-width:560px">
+      <h2>Verify an FD certificate</h2>
+      <p class="sub">Anyone can check a certificate on the public blockchain. No login, no fee.</p>
+      <label>Certificate number</label><input id="chkId" type="number" placeholder="1">
+      <div class="actions"><button id="chkBtn">Check</button></div>
+      <div id="chkOut" style="margin-top:16px"></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="tab-how" class="hidden">
+    <div class="card">
+      <h2>How Skyline Bank uses Ethereum</h2>
+      <p class="sub">The customer's money, interest and tax stay in the bank's core banking system. Only the certificate and the rewards live on-chain.</p>
+      <div class="flow"><span>Customer opens FD</span><b>→</b><span>Bank verifies wallet (KYC)</span><b>→</b><span>FD certificate NFT issued</span><b>→</b><span>FD matures, NFT burned</span><b>→</b><span>Maturity Miles minted</span><b>→</b><span>Customer redeems a perk</span></div>
+      <ol class="steps">
+        <li><b>ERC-721 (SBOIFDCertificate):</b> one unique, soulbound certificate per FD. It stores a reference, the term and the maturity date only.</li>
+        <li><b>ERC-20 (SBOIRewardToken):</b> Skyline Maturity Miles, 0 decimals, 1 token = Rs 1 of perks. Only KYC-verified wallets can hold them, and each mint is capped at 2,000.</li>
+        <li><b>This website</b> is the front end. It talks to the two contracts through MetaMask using the ethers.js library. Reads are free; writes are transactions you confirm.</li>
+        <li><b>Safeguards:</b> transfers of the certificate are blocked, early maturity is rejected, duplicate deposit references are rejected, and the bank can pause both contracts.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section id="tab-setup" class="hidden">
+    <div class="card" style="max-width:640px">
+      <h2>Contract addresses</h2>
+      <p class="sub">Paste the addresses from Remix after you deploy on Sepolia. They are saved in this browser.</p>
+      <label>SBOIFDCertificate (ERC-721) address</label><input id="sCert" placeholder="0x...">
+      <label>SBOIRewardToken (ERC-20) address</label><input id="sTok" placeholder="0x...">
+      <label>Deployment block (optional, speeds up loading history)</label><input id="sBlock" type="number" placeholder="e.g. 7300000">
+      <div class="actions"><button id="saveSetup">Save</button></div>
+    </div>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+const SEPOLIA = { chainId: "0xaa36a7", name: "Sepolia" };
+const EXPLORER = "https://sepolia.etherscan.io";
+const CERT_ABI = [
+  "function owner() view returns (address)",
+  "function ownerOf(uint256) view returns (address)",
+  "function deposits(uint256) view returns (uint256 depositRef, uint16 termMonths, uint64 maturityDate)",
+  "function tokenURI(uint256) view returns (string)",
+  "function issue(address to, uint256 depositRef, uint16 termMonths, uint64 maturityDate) returns (uint256)",
+  "function mature(uint256 tokenId)",
+  "function setTokenURI(uint256 tokenId, string uri)",
+  "event CertificateIssued(uint256 indexed tokenId, address indexed holder, uint16 termMonths, uint64 maturityDate)",
+  "event CertificateMatured(uint256 indexed tokenId, address indexed holder, uint16 termMonths)"
+];
+const TOKEN_ABI = [
+  "function owner() view returns (address)",
+  "function balanceOf(address) view returns (uint256)",
+  "function verified(address) view returns (bool)",
+  "function perks(uint256) view returns (string name, uint256 cost, bool active)",
+  "function setVerified(address wallet, bool status)",
+  "function mintReward(address to, uint256 amount)",
+  "function setPerk(uint256 perkId, string name, uint256 cost, bool active)",
+  "function redeem(uint256 perkId)",
+  "event RewardMinted(address indexed to, uint256 amount)",
+  "event PerkRedeemed(address indexed customer, uint256 indexed perkId, uint256 cost)"
+];
+
+let provider, signer, me, cert, token, cfg = loadCfg();
+
+function loadCfg() { try { return JSON.parse(localStorage.getItem("sboiCfg")) || {}; } catch (e) { return {}; } }
+function saveCfg() { try { localStorage.setItem("sboiCfg", JSON.stringify(cfg)); } catch (e) {} }
+const $ = id => document.getElementById(id);
+function toast(msg, ms = 5000) { const t = $("toast"); t.innerHTML = msg; t.style.display = "block"; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", ms); }
+function short(a) { return a ? a.slice(0, 6) + "…" + a.slice(-4) : ""; }
+function errMsg(e) { return (e && (e.reason || e.shortMessage || (e.info && e.info.error && e.info.error.message) || e.message)) || "Something went wrong"; }
+function fmtDate(ts) { return new Date(Number(ts) * 1000).toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
+
+// tabs
+document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#tabs button").forEach(x => x.classList.remove("active")); b.classList.add("active");
+  document.querySelectorAll("main > section").forEach(s => s.classList.add("hidden"));
+  $("tab-" + b.dataset.tab).classList.remove("hidden");
+});
+
+// setup
+$("sCert").value = cfg.cert || ""; $("sTok").value = cfg.token || ""; $("sBlock").value = cfg.block || "";
+$("saveSetup").onclick = () => {
+  cfg = { cert: $("sCert").value.trim(), token: $("sTok").value.trim(), block: $("sBlock").value.trim() };
+  if (!ethers.isAddress(cfg.cert) || !ethers.isAddress(cfg.token)) return toast("Please paste two valid contract addresses.");
+  saveCfg(); toast("Saved. Connect MetaMask to load your data."); if (signer) initContracts();
+};
+
+async function connect() {
+  if (!window.ethereum) return toast("MetaMask was not found. Install it, then open this page through a local web server (see the README).", 8000);
+  try {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    try { await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: SEPOLIA.chainId }] }); }
+    catch (e) { toast("Please switch MetaMask to the Sepolia test network."); }
+    provider = new ethers.BrowserProvider(window.ethereum);
+    signer = await provider.getSigner(); me = await signer.getAddress();
+    const net = await provider.getNetwork();
+    $("netPill").textContent = (net.chainId === 11155111n ? "Sepolia" : "Wrong network") + " · " + short(me);
+    $("connectBtn").textContent = "Connected";
+    $("addr").textContent = me;
+    initContracts();
+  } catch (e) { toast(errMsg(e)); }
+}
+$("connectBtn").onclick = connect;
+if (window.ethereum) { window.ethereum.on && window.ethereum.on("accountsChanged", () => connect()); window.ethereum.on && window.ethereum.on("chainChanged", () => location.reload()); }
+
+function initContracts() {
+  if (!cfg.cert || !cfg.token) { toast("Add your contract addresses in the Setup tab first."); return; }
+  cert = new ethers.Contract(cfg.cert, CERT_ABI, signer);
+  token = new ethers.Contract(cfg.token, TOKEN_ABI, signer);
+  refresh();
+}
+
+async function refresh() {
+  if (!token) return;
+  try {
+    const [bal, ver, owner] = await Promise.all([token.balanceOf(me), token.verified(me), token.owner()]);
+    $("balance").textContent = bal.toString() + " miles";
+    $("verifiedLine").innerHTML = ver ? '<span class="tag ok">KYC-verified wallet</span>' : '<span class="tag wait">Not verified yet: ask the bank to verify this wallet</span>';
+    $("ownerNote").innerHTML = owner.toLowerCase() === me.toLowerCase()
+      ? '<span class="tag ok">You are connected as the bank\'s issuer account</span>'
+      : 'You are not the bank\'s issuer account (' + short(owner) + '). These actions will be rejected by the contract.';
+  } catch (e) { toast("Could not read the contracts. Check the addresses and network. " + errMsg(e), 8000); }
+  loadCerts(); loadPerks(); loadLog();
+}
+$("refreshBtn").onclick = refresh;
+
+async function loadCerts() {
+  const box = $("certs");
+  try {
+    const from = cfg.block ? Number(cfg.block) : 0;
+    const issued = await cert.queryFilter(cert.filters.CertificateIssued(null, me), from);
+    if (!issued.length) { box.innerHTML = '<p class="note">No certificates found for this wallet.</p>'; return; }
+    box.innerHTML = "";
+    for (const ev of issued.reverse()) {
+      const id = ev.args.tokenId;
+      let active = true, d;
+      try { const o = await cert.ownerOf(id); active = o.toLowerCase() === me.toLowerCase(); d = await cert.deposits(id); } catch (e) { active = false; }
+      box.insertAdjacentHTML("beforeend", certCard(id, d, ev.args.termMonths, ev.args.maturityDate, active));
+    }
+  } catch (e) { box.innerHTML = '<p class="note">Could not load history (' + errMsg(e) + '). Try adding the deployment block in Setup.</p>'; }
+}
+
+function certCard(id, d, term, maturity, active) {
+  const ref = d ? d.depositRef.toString() : "–";
+  const mature = Number(maturity) * 1000 <= Date.now();
+  const status = !active ? "MATURED (burned)" : mature ? "READY TO MATURE" : "ACTIVE";
+  return `<div class="cert" style="${active ? "" : "filter:grayscale(.8)"}">
+    <div style="font-size:12px;letter-spacing:1px;opacity:.85">SKYLINE BANK OF INDIA · FD CERTIFICATE</div>
+    <div class="num">#${String(id).padStart(4, "0")}</div>
+    <dl><dt>Deposit reference</dt><dd>FD-${ref}</dd><dt>Plan</dt><dd>${term} months</dd><dt>Matures</dt><dd>${fmtDate(maturity)}</dd><dt>Status</dt><dd>${status}</dd></dl>
+    <svg class="skyline" viewBox="0 0 300 30" preserveAspectRatio="none"><path d="M0 30V18h14V10h10v20h8V6h12v24h10V14h16v16h8V2h10v28h12V12h14v18h10V8h12v22h8V16h18v14h10V4h12v26h14V12h12v18h14V20h16v10z" fill="#fff"/></svg>
+  </div>`;
+}
+
+async function loadPerks() {
+  const box = $("perks"); box.innerHTML = ""; let found = 0;
+  for (let i = 1; i <= 10; i++) {
+    try {
+      const p = await token.perks(i);
+      if (p.cost > 0n && p.active) {
+        found++;
+        box.insertAdjacentHTML("beforeend", `<div class="perk"><div><b>${p.name}</b><div class="note">Perk #${i}</div></div><div style="display:flex;gap:10px;align-items:center"><span class="tag ok">${p.cost} miles</span><button data-perk="${i}">Redeem</button></div></div>`);
+      }
+    } catch (e) {}
+  }
+  if (!found) box.innerHTML = '<p class="note">No perks available yet. The bank sets them in the Bank console.</p>';
+  box.querySelectorAll("button[data-perk]").forEach(b => b.onclick = () => send(() => token.redeem(b.dataset.perk), "Perk redeemed. The bank will deliver it."));
+}
+
+async function loadLog() {
+  const box = $("log");
+  try {
+    const from = cfg.block ? Number(cfg.block) : 0;
+    const [a, b, c, d] = await Promise.all([
+      cert.queryFilter(cert.filters.CertificateIssued(), from), cert.queryFilter(cert.filters.CertificateMatured(), from),
+      token.queryFilter(token.filters.RewardMinted(), from), token.queryFilter(token.filters.PerkRedeemed(), from)]);
+    const rows = [
+      ...a.map(e => [e.blockNumber, `Certificate #${e.args.tokenId} issued to ${short(e.args.holder)} (${e.args.termMonths} months)`, e.transactionHash]),
+      ...b.map(e => [e.blockNumber, `Certificate #${e.args.tokenId} matured and burned`, e.transactionHash]),
+      ...c.map(e => [e.blockNumber, `${e.args.amount} Maturity Miles minted to ${short(e.args.to)}`, e.transactionHash]),
+      ...d.map(e => [e.blockNumber, `${short(e.args.customer)} redeemed perk #${e.args.perkId} for ${e.args.cost} miles`, e.transactionHash])
+    ].sort((x, y) => y[0] - x[0]).slice(0, 12);
+    box.innerHTML = rows.length ? rows.map(r => `<div>${r[1]} · <a target="_blank" href="${EXPLORER}/tx/${r[2]}">view on Etherscan</a></div>`).join("") : '<p class="note">No activity yet.</p>';
+  } catch (e) { box.innerHTML = '<p class="note">Could not load activity (' + errMsg(e) + ').</p>'; }
+}
+
+async function send(fn, okMsg) {
+  if (!signer || !token) return toast("Connect MetaMask and add contract addresses first.");
+  try {
+    toast("Confirm the transaction in MetaMask…", 15000);
+    const tx = await fn();
+    toast("Sent. Waiting for Sepolia to confirm… " + `<a style="color:#8ff" target="_blank" href="${EXPLORER}/tx/${tx.hash}">track</a>`, 30000);
+    await tx.wait();
+    toast("✔ " + okMsg + ` <a style="color:#8ff" target="_blank" href="${EXPLORER}/tx/${tx.hash}">Etherscan</a>`, 9000);
+    refresh();
+  } catch (e) { toast("✖ " + errMsg(e), 9000); }
+}
+function addr(id) { const v = $(id).value.trim(); if (!ethers.isAddress(v)) { toast("Please enter a valid wallet address."); throw new Error("bad address"); } return v; }
+
+$("vYes").onclick = () => { try { const a = addr("vAddr"); send(() => token.setVerified(a, true), "Wallet verified."); } catch (e) {} };
+$("vNo").onclick = () => { try { const a = addr("vAddr"); send(() => token.setVerified(a, false), "Wallet removed from the verified list."); } catch (e) {} };
+$("issueBtn").onclick = () => {
+  try {
+    const to = addr("iTo"), ref = $("iRef").value, term = $("iTerm").value, mins = Number($("iMins").value || 5);
+    if (!ref) return toast("Enter a deposit reference.");
+    const maturity = Math.floor(Date.now() / 1000) + Math.max(1, mins) * 60;
+    send(() => cert.issue(to, ref, term, maturity), "Certificate issued to the customer's wallet.");
+  } catch (e) {}
+};
+$("calcBtn").onclick = () => {
+  const amt = Number($("mAmt").value), term = Number($("mTerm").value);
+  if (!amt || !term) return toast("Enter the deposit amount and term.");
+  const raw = Math.floor((amt / 200) * (term / 12)), capped = Math.min(raw, 2000);
+  $("mTokens").value = capped;
+  toast(`Reward: ${raw.toLocaleString("en-IN")} by the rule${raw > 2000 ? ", capped at 2,000" : ""}.`);
+};
+$("welcomeBtn").onclick = () => $("mTokens").value = 10;
+$("mintBtn").onclick = () => { try { const to = addr("mTo"); const n = $("mTokens").value; send(() => token.mintReward(to, n), n + " Maturity Miles minted."); } catch (e) {} };
+$("matureBtn").onclick = () => { const id = $("matId").value; if (!id) return toast("Enter a certificate number."); send(() => cert.mature(id), "Certificate matured and burned. Now mint the reward."); };
+$("perkBtn").onclick = () => send(() => token.setPerk($("pId").value, $("pName").value, $("pCost").value, true), "Perk saved.");
+$("perkOffBtn").onclick = () => send(() => token.setPerk($("pId").value, $("pName").value, $("pCost").value || 1, false), "Perk switched off.");
+$("uriBtn").onclick = () => { const id = $("uId").value, u = $("uUri").value.trim(); if (!id || !u) return toast("Enter a certificate number and URI."); send(() => cert.setTokenURI(id, u), "Artwork linked."); };
+
+$("chkBtn").onclick = async () => {
+  const out = $("chkOut"), id = $("chkId").value;
+  if (!id) return toast("Enter a certificate number.");
+  if (!cfg.cert) return toast("Add the contract address in Setup first.");
+  const reader = new ethers.Contract(cfg.cert, CERT_ABI, provider || new ethers.JsonRpcProvider("https://ethereum-sepolia-rpc.publicnode.com"));
+  try {
+    const holder = await reader.ownerOf(id); const d = await reader.deposits(id);
+    out.innerHTML = '<p><span class="tag ok">Genuine and active</span></p>' + certCard(id, d, d.termMonths, d.maturityDate, true) +
+      `<p class="note">Held by wallet ${short(holder)} · issued by Skyline Bank of India's contract <a target="_blank" href="${EXPLORER}/address/${cfg.cert}">${short(cfg.cert)}</a></p>`;
+  } catch (e) { out.innerHTML = '<p><span class="tag no">Not found or already matured</span></p><p class="note">No active certificate with this number exists on-chain.</p>'; }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blockchain client demos | Skyline Bank and Whitford Global College</title>
+<style>
+  body { margin:0; font-family:"Segoe UI", Arial, sans-serif; background:#f4f5f8; color:#1d2433; }
+  .wrap { max-width:900px; margin:60px auto; padding:0 20px; }
+  h1 { font-size:26px; margin:0 0 6px; } p.lead { color:#5b6475; margin:0 0 30px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+  a.card { display:block; text-decoration:none; color:#fff; border-radius:16px; padding:26px; min-height:170px; box-shadow:0 6px 20px rgba(20,30,60,.12); transition:transform .15s; }
+  a.card:hover { transform:translateY(-3px); }
+  .bank { background:linear-gradient(140deg,#13294b,#1f4f7a 60%,#14a38b); }
+  .college { background:linear-gradient(140deg,#4a1228,#7b2a4a 60%,#b8872b); }
+  a.card h2 { margin:0 0 6px; font-size:20px; } a.card p { margin:0 0 14px; opacity:.85; font-size:14px; }
+  .chips span { display:inline-block; font-size:12px; background:rgba(255,255,255,.16); padding:4px 10px; border-radius:999px; margin:0 6px 6px 0; }
+  .note { margin-top:30px; font-size:13px; color:#5b6475; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ethereum for two clients</h1>
+  <p class="lead">Each demo connects MetaMask to smart contracts on the Sepolia test network.</p>
+  <div class="grid">
+    <a class="card bank" href="bank.html">
+      <h2>Skyline Bank of India</h2>
+      <p>Fixed deposit certificates and Skyline Maturity Miles.</p>
+      <div class="chips"><span>ERC-721 FD certificate</span><span>ERC-20 rewards</span><span>Perk redemption</span></div>
+    </a>
+    <a class="card college" href="college.html">
+      <h2>Whitford Global College</h2>
+      <p>Verified credentials and Whitford Merit Points.</p>
+      <div class="chips"><span>ERC-721 credential</span><span>ERC-20 points</span><span>Employer check</span></div>
+    </a>
+  </div>
+  <p class="note">Fictional clients created for the NCI Blockchain Technologies CA1 project. Test network only; no real money is involved.</p>
+</div>
+</body>
+</html>
