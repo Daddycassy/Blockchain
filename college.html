@@ -109,17 +109,38 @@
   .perk small { color:var(--muted); }
   .creds { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:16px; }
 
-  /* certificate (parchment) */
-  .parch { background:#fffaf0; border:1px solid #e6d3a8; border-radius:6px; padding:20px 22px; position:relative; color:#2c2118; box-shadow:inset 0 0 0 6px #fffaf0, inset 0 0 0 7px #d9bd78; }
-  .parch .ttl { text-align:center; font-family:var(--serif); color:var(--maroon); font-size:17px; letter-spacing:1px; }
-  .parch .small { text-align:center; font-size:10px; letter-spacing:2.5px; color:#8c7a5a; text-transform:uppercase; }
-  .parch .num { text-align:center; font-family:var(--serif); font-size:30px; margin:6px 0; color:#3b2a14; }
-  .parch dl { display:grid; grid-template-columns:auto 1fr; gap:3px 10px; font-size:12.5px; margin:8px 0 0; }
-  .parch dt { color:#8c7a5a; } .parch dd { margin:0; text-align:right; font-weight:700; }
-  .seal { position:absolute; right:14px; bottom:14px; width:54px; height:54px; border-radius:50%; background:radial-gradient(circle,#d8b45a 0,#b88a2a 70%); color:#4a2c00; display:grid; place-items:center; font-size:9px; font-weight:800; text-align:center; line-height:1.1; box-shadow:0 2px 0 #8d6514; }
-  .revoked { filter:grayscale(1); opacity:.75; }
-  .revoked:before { content:"REVOKED"; position:absolute; inset:0; display:grid; place-items:center; font-size:34px; font-weight:900; color:rgba(177,53,42,.55); transform:rotate(-18deg); }
-
+  /* certificate: premium digital diploma */
+  .creds { grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); }
+  .dip { position:relative; border-radius:18px; padding:2px; background:linear-gradient(135deg,#f7e3a1,#b8862b 25%,#fff1c1 50%,#a87a22 75%,#f3d98c); box-shadow:0 18px 40px rgba(40,5,20,.35); transition:transform .35s ease, box-shadow .35s ease; }
+  .dip:hover { transform:translateY(-6px) rotateX(4deg) rotateY(-4deg); box-shadow:0 28px 60px rgba(40,5,20,.45); }
+  .dip-in { position:relative; overflow:hidden; border-radius:16px; padding:22px 24px 18px; color:#fff; min-height:215px;
+    background: radial-gradient(120% 90% at 100% 0%, rgba(201,160,61,.28) 0, transparent 55%),
+                radial-gradient(90% 80% at 0% 100%, rgba(125,35,71,.9) 0, transparent 60%),
+                repeating-radial-gradient(circle at 85% 60%, rgba(255,255,255,.035) 0 2px, transparent 2px 9px),
+                linear-gradient(150deg,#2a0716 0%,#4d1027 55%,#1a0510 100%); }
+  .dip-in:after { content:""; position:absolute; inset:-60%; background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.18) 48%, rgba(255,230,160,.22) 50%, transparent 58%); transform:translateX(-60%); transition:transform 1.1s ease; pointer-events:none; }
+  .dip:hover .dip-in:after { transform:translateX(60%); }
+  .dip-wm { position:absolute; right:-18px; bottom:-26px; width:170px; opacity:.09; }
+  .dip-top { display:flex; align-items:center; gap:10px; }
+  .dip-top svg { width:28px; height:32px; flex:none; }
+  .dip-school { font-size:10.5px; letter-spacing:2.6px; color:#ead7b0; line-height:1.3; }
+  .dip-no { margin-left:auto; font-family:var(--serif); font-size:15px; color:#f3d98c; letter-spacing:1px; }
+  .dip-deg { margin-top:18px; font-size:11px; letter-spacing:2.5px; color:#d9c39a; text-transform:uppercase; }
+  .dip-prog { font-family:var(--serif); font-size:27px; line-height:1.15; margin:4px 0 2px;
+    background:linear-gradient(90deg,#fff6d6,#e7c873 45%,#fff1c1 70%,#d4a94a); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .dip-rule { height:1px; background:linear-gradient(90deg,rgba(231,200,115,.8),transparent); margin:14px 0 12px; }
+  .dip-meta { display:flex; gap:18px; align-items:flex-end; flex-wrap:wrap; position:relative; z-index:1; }
+  .dip-meta div small { display:block; font-size:9.5px; letter-spacing:2px; color:#bfa983; text-transform:uppercase; }
+  .dip-meta div b { font-size:13.5px; font-weight:600; color:#fff; }
+  .dip-status { margin-left:auto; font-size:11px; font-weight:800; letter-spacing:1.5px; padding:6px 11px; border-radius:999px; display:inline-flex; align-items:center; gap:6px; }
+  .dip-status i { width:7px; height:7px; border-radius:50%; background:currentColor; box-shadow:0 0 0 0 currentColor; animation:pulse 2s infinite; }
+  .st-valid { color:#7ef0b3; background:rgba(46,170,105,.16); border:1px solid rgba(126,240,179,.45); }
+  .st-revoked { color:#ff8f84; background:rgba(177,53,42,.2); border:1px solid rgba(255,143,132,.45); }
+  @keyframes pulse { 0% { box-shadow:0 0 0 0 rgba(126,240,179,.6); } 70% { box-shadow:0 0 0 7px rgba(126,240,179,0); } 100% { box-shadow:0 0 0 0 rgba(126,240,179,0); } }
+  .dip-foot { display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:10.5px; color:#bfa983; letter-spacing:1px; position:relative; z-index:1; }
+  .dip-foot a { color:#f3d98c; text-decoration:none; border-bottom:1px dotted rgba(243,217,140,.6); }
+  .dip.revoked { filter:grayscale(.75); }
+  .dip.revoked .dip-in:before { content:"REVOKED"; position:absolute; top:44%; left:-10%; right:-10%; text-align:center; font-weight:900; font-size:30px; letter-spacing:8px; color:rgba(255,143,132,.55); transform:rotate(-12deg); border-top:2px solid rgba(255,143,132,.4); border-bottom:2px solid rgba(255,143,132,.4); z-index:2; }
   /* verify */
   .verify-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
   label { display:block; font-size:12px; color:var(--muted); margin:12px 0 5px; font-weight:700; letter-spacing:.3px; }
@@ -490,15 +511,27 @@ async function loadTier() {
   } catch (e) {}
 }
 
+const DEGREE = { MSC: "Master of Science", BA: "Bachelor of Arts (Honours)", CERT: "Certificate" };
+const CREST = '<svg viewBox="0 0 46 52"><path d="M23 2 44 9v16c0 13-9 21-21 25C11 46 2 38 2 25V9z" fill="#5c1430" stroke="#e7c873" stroke-width="2.5"/><path d="M23 12l11 5H12z" fill="#e7c873"/><rect x="14" y="18" width="3" height="13" fill="#e7c873"/><rect x="21.5" y="18" width="3" height="13" fill="#e7c873"/><rect x="29" y="18" width="3" height="13" fill="#e7c873"/><rect x="12" y="32" width="22" height="3" fill="#e7c873"/></svg>';
 function credHTML(id, v) {
-  const prog = PROG_NAME[v.programmeCode] || v.programmeCode;
-  return `<div class="parch ${v.valid ? "" : "revoked"}">
-    <div class="small">Whitford Global College · Dublin</div>
-    <div class="ttl">Verified Credential</div>
-    <div class="num">No. ${String(id).padStart(4, "0")}</div>
-    <dl><dt>Award</dt><dd>${prog}</dd><dt>NFQ level</dt><dd>${v.nfqLevel}</dd><dt>Awarded</dt><dd>${fmtDate(v.awardDate)}</dd><dt>Status</dt><dd style="color:${v.valid ? "#1f7a4c" : "#b1352a"}">${v.valid ? "Valid" : "Revoked"}</dd></dl>
-    <div class="seal">WGC<br>ERC-721</div>
-  </div>`;
+  const code = v.programmeCode;
+  const prog = (PROG_NAME[code] || code).replace(/^(MSc|BA \(Hons\)|Certificate) in /, "");
+  const degree = DEGREE[code.split("-")[0]] || "Award";
+  const num = String(id).padStart(4, "0");
+  const status = v.valid ? '<span class="dip-status st-valid"><i></i>VALID</span>' : '<span class="dip-status st-revoked"><i></i>REVOKED</span>';
+  return `<div class="dip ${v.valid ? "" : "revoked"}"><div class="dip-in">
+    <svg class="dip-wm" viewBox="0 0 46 52"><path d="M23 2 44 9v16c0 13-9 21-21 25C11 46 2 38 2 25V9z" fill="#e7c873"/></svg>
+    <div class="dip-top">${CREST}<div class="dip-school">WHITFORD GLOBAL COLLEGE<br>DUBLIN · EST. 1998</div><div class="dip-no">No. ${num}</div></div>
+    <div class="dip-deg">${degree} in</div>
+    <div class="dip-prog">${prog}</div>
+    <div class="dip-rule"></div>
+    <div class="dip-meta">
+      <div><small>NFQ level</small><b>${v.nfqLevel}</b></div>
+      <div><small>Awarded</small><b>${fmtDate(v.awardDate)}</b></div>
+      ${status}
+    </div>
+    <div class="dip-foot"><span>◆ SOULBOUND · ERC-721 · SEPOLIA</span><a target="_blank" href="${EXPLORER}/nft/${ADDR.cred}/${id}">View on Etherscan</a></div>
+  </div></div>`;
 }
 
 async function loadCreds() {
